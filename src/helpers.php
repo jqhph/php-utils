@@ -1,6 +1,6 @@
 <?php
 
-if (! function_exists('array_chunk_process')) {
+if (! function_exists('array_chunk_each')) {
     /**
      * 数组分块处理.
      *
@@ -8,11 +8,13 @@ if (! function_exists('array_chunk_process')) {
      * @param int      $len
      * @param callable $callback
      */
-    function array_chunk_process(array $items, int $len, callable $callback)
+    function array_chunk_each(array $items, int $len, callable $callback)
     {
-        $count = count($items);
+        if (! $items) {
+            return;
+        }
 
-        if ($count <= $len) {
+        if (count($items) <= $len) {
             call_user_func($callback, $items, 1);
 
             return;
