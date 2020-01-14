@@ -80,7 +80,7 @@ abstract class ElasticsearchIndex
      * @var array
      */
     protected static $setting = [
-//        'max_result_window' => 2000000, // 最多能翻到200万条数据
+        //        'max_result_window' => 2000000, // 最多能翻到200万条数据
 
         // 分片应根据实际情况设置，不宜设置过多或过少
         // 每个分片最大存储空间推荐为30G，所以此处默认开启2个分片即可
@@ -89,7 +89,7 @@ abstract class ElasticsearchIndex
         'number_of_replicas' => 1,
 
         // 分片刷新时间
-//        'refresh_interval' => '2s',
+        //        'refresh_interval' => '2s',
 
         'search.slowlog.threshold.query.warn' => '5s', // 超过5秒的query产生1个warn日志
         'search.slowlog.threshold.query.info' => '1s', // 超过1秒的query产生1个info日志
