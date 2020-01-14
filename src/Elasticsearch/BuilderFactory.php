@@ -5,6 +5,9 @@ namespace Dcat\Utils\Elasticsearch;
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 
+/**
+ * @require elasticsearch/elasticsearch
+ */
 class BuilderFactory
 {
     protected static $client;

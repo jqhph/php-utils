@@ -52,6 +52,9 @@ class ElasticsearchModel
      */
     protected $type;
 
+    /**
+     * @var Client
+     */
     protected $client;
 
     /**

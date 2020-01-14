@@ -21,7 +21,7 @@ use Intervention\Image\ImageManager;
 use Symfony\Component\Finder\Finder;
 
 /**
- * @composer symfony/finder intervention/image
+ * @require symfony/finder intervention/image
  */
 class Captcha
 {

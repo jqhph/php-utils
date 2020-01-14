@@ -6,6 +6,9 @@ use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
+/**
+ * @require php-amqplib/php-amqplib
+ */
 class Factory
 {
     /**
