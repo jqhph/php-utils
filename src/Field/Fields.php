@@ -9,6 +9,7 @@ namespace Dcat\Utils\Field;
  * @method $this integer($fields = true) 设置整型字段
  * @method $this float($fields = true) 设置浮点型字段
  * @method $this array($fields = true) 设置数组类型字段
+ * @method $this rename($key, $newKey = null) 字段重命名
  * @method $this default($key, $value = null) 设置字段默认值
  */
 class Fields
@@ -80,6 +81,11 @@ class Fields
      * @var array|true
      */
     protected $arrayFields = [];
+
+    /**
+     * @var array
+     */
+    protected $renameFields = [];
 
     /**
      * 默认值设置.
@@ -186,7 +192,7 @@ class Fields
             );
         }
 
-        return $result;
+        return $this->replaceKey($result);
     }
 
     /**
@@ -206,6 +212,27 @@ class Fields
         }
 
         return $value;
+    }
+
+    /**
+     * 字段重命名
+     *
+     * @param array $row
+     *
+     * @return array
+     */
+    protected function replaceKey(array $row)
+    {
+        foreach ($this->renameFields as $field => $newField) {
+            if (! isset($row[$field])) {
+                continue;
+            }
+
+            $row[$newField] = $row[$field];
+            unset($row[$field]);
+        }
+
+        return $row;
     }
 
     /**
@@ -315,6 +342,12 @@ class Fields
             $fields = $fields === true ? true : (array) $fields;
 
             $this->{static::$map['setter'][$name]} = $fields;
+        } elseif ($name === 'rename') {
+            if (is_array($arguments[0])) {
+                $this->renameFields = $arguments[0];
+            } else {
+                $this->renameFields[$arguments[0]] = $arguments[1] ?? null;
+            }
         } elseif ($name === 'default') {
             if (is_array($arguments[0])) {
                 $this->defaultSettings = $arguments[0];
