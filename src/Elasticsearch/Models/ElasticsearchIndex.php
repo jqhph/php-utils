@@ -6,10 +6,9 @@ use Dcat\Utils\Elasticsearch\BuilderFactory;
 use Elasticsearch\Client;
 
 /**
- * 索引定义
+ * 索引定义.
  *
  * Class Index
- * @package JZTW\Elasticsearch\Models
  */
 abstract class ElasticsearchIndex
 {
@@ -50,21 +49,21 @@ abstract class ElasticsearchIndex
     const FORMAT_DATE = 'YYYY-MM-dd';
 
     /**
-     * 保存所有字段
+     * 保存所有字段.
      *
      * @var array
      */
     protected static $fields = [];
 
     /**
-     * 索引名称
+     * 索引名称.
      *
      * @var string
      */
     const NAME = null;
 
     /**
-     * 索引别名，不能与索引名称相同
+     * 索引别名，不能与索引名称相同.
      *
      * @var array
      */
@@ -76,7 +75,7 @@ abstract class ElasticsearchIndex
     protected $client;
 
     /**
-     * 索引分片设置
+     * 索引分片设置.
      *
      * @var array
      */
@@ -101,13 +100,13 @@ abstract class ElasticsearchIndex
         'indexing.slowlog.threshold.index.warn' => '5s', // 索引数据超过5秒产生一个warn日志
         'indexing.slowlog.threshold.index.info' => '1s',
 
-//        'threadpool.index.queue_size' => 80000,
-//        'threadpool.bulk.queue_size' => 10000,
+        //        'threadpool.index.queue_size' => 80000,
+        //        'threadpool.bulk.queue_size' => 10000,
 
     ];
 
     /**
-     * 索引详情
+     * 索引详情.
      *
      * @var array
      */
@@ -121,7 +120,7 @@ abstract class ElasticsearchIndex
     }
 
     /**
-     * 创建索引
+     * 创建索引.
      *
      * @return array
      */
@@ -132,7 +131,7 @@ abstract class ElasticsearchIndex
             'body' => [
                 'settings' => static::$setting,
                 'mappings' => static::$mapping,
-            ]
+            ],
         ]);
 
         if ($result) {
@@ -155,7 +154,7 @@ abstract class ElasticsearchIndex
     }
 
     /**
-     * 删除索引
+     * 删除索引.
      *
      * @return array
      */
@@ -169,7 +168,7 @@ abstract class ElasticsearchIndex
     }
 
     /**
-     * 获取所有字段
+     * 获取所有字段.
      *
      * @return array
      */

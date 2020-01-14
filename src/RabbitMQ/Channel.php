@@ -2,8 +2,8 @@
 
 namespace Dcat\Utils\RabbitMQ;
 
-use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Exchange\AMQPExchangeType;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -32,7 +32,7 @@ class Channel
     }
 
     /**
-     * 生成一个交换机exchange
+     * 生成一个交换机exchange.
      *
      * 没有返回值,rabbitmq内部生成
      *
@@ -56,10 +56,9 @@ class Channel
         $auto_delete = false,
         $internal = false,
         $nowait = false,
-        $arguments = array(),
+        $arguments = [],
         $ticket = null
-    )
-    {
+    ) {
         return $this->channel->exchange_declare(
             $name,
             $type,
@@ -73,9 +72,8 @@ class Channel
         );
     }
 
-
     /**
-     * 生成一个队列queue
+     * 生成一个队列queue.
      *
      * @param string $queue_name 队列名称.默认为空,系统自动生成.
      * @param string $passive 检查队列名称是否存在  有就返回给你,没有报错..如此鸡肋  没有用queue_declare的方法会自动创建
@@ -97,14 +95,12 @@ class Channel
         $nowait = false,
         array $arguments = [],
         $ticket = null
-    )
-    {
+    ) {
         return $this->channel->queue_declare($queue_name, $passive, $durable, $exclusive, $auto_delete, $nowait, $arguments, $ticket);
     }
 
-
     /**
-     * 队列绑定
+     * 队列绑定.
      *
      * @param string $queue_name 队列名称
      * @param string $exchange 交换机名称
@@ -117,9 +113,8 @@ class Channel
         return $this->channel->queue_bind($queue_name, $exchange, $routing_key);
     }
 
-
     /**
-     * 推送消息——生产者提交
+     * 推送消息——生产者提交.
      *
      * @param AMQPMessage $msg 传递内容
      * @param string $exchange 交换机
@@ -137,8 +132,7 @@ class Channel
         $mandatory = false,
         $immediate = false,
         $ticket = null
-    )
-    {
+    ) {
         return $this->channel->basic_publish($msg, $exchange, $routing_key, $mandatory, $immediate, $ticket);
     }
 
@@ -159,8 +153,7 @@ class Channel
         $mandatory = false,
         $immediate = false,
         $ticket = null
-    )
-    {
+    ) {
         foreach ($messages as $v) {
             if (! $v instanceof AMQPMessage) {
                 $v = new AMQPMessage($v);
@@ -179,9 +172,8 @@ class Channel
         $this->channel->publish_batch();
     }
 
-
     /**
-     * 设定队列一次处理的消息条数————主要用于ack确定模式,保证一次只处理一条消息
+     * 设定队列一次处理的消息条数————主要用于ack确定模式,保证一次只处理一条消息.
      *
      * @param string $prefetch_size
      * @param int    $prefetch_count 一次处理message数量
@@ -194,9 +186,8 @@ class Channel
         return $this->channel->basic_qos($prefetch_size, $prefetch_count, $a_global);
     }
 
-
     /**
-     * 推送消息——消费者提交
+     * 推送消息——消费者提交.
      *
      * @param string $queue_name 队列名称
      * @param string $consumer_tag 消费者的标记,内部生成一个唯一标识
@@ -217,9 +208,8 @@ class Channel
         $nowait = false,
         $callback = null,
         $ticket = null,
-        $arguments = array()
-    )
-    {
+        $arguments = []
+    ) {
         return $this->channel->basic_consume(
             $queue_name,
             $consumer_tag,
@@ -234,7 +224,7 @@ class Channel
     }
 
     /**
-     * 关闭通道
+     * 关闭通道.
      */
     public function close()
     {
@@ -263,5 +253,4 @@ class Channel
 
         return $this->channel->{$method}(...$arguments);
     }
-
 }

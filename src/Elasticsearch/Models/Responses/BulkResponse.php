@@ -7,7 +7,7 @@ class BulkResponse extends Response
     // {"took":9,"errors":false,"items":[{"index":{"_index":"yxb_message","_type":"msg","_id":"AWWN0gIU7Nf83CZJnSfI","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true,"status":201}},{"index":{"_index":"yxb_message","_type":"msg","_id":"AWWN0gIU7Nf83CZJnSfJ","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true,"status":201}}]}
 
     /**
-     * 获取添加成功的数量
+     * 获取添加成功的数量.
      *
      * @return int
      */
@@ -22,6 +22,7 @@ class BulkResponse extends Response
                 $num++;
             }
         }
+
         return $num;
     }
 
@@ -46,7 +47,7 @@ class BulkResponse extends Response
     }
 
     /**
-     * 获取所有新增成功的id
+     * 获取所有新增成功的id.
      *
      * @return array
      */
@@ -61,8 +62,7 @@ class BulkResponse extends Response
                 $ids[] = $item['index']['_id'];
             }
         }
+
         return $ids;
-
     }
-
 }

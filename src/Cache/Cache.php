@@ -22,7 +22,7 @@ abstract class Cache
     protected $key;
 
     /**
-     * 过期时间，秒
+     * 过期时间，秒.
      *
      * @var int
      */
@@ -34,7 +34,7 @@ abstract class Cache
     protected $storage;
 
     /**
-     * 初始化
+     * 初始化.
      *
      * @throws \Exception
      */
@@ -46,7 +46,7 @@ abstract class Cache
     }
 
     /**
-     * 格式化要返回的数据
+     * 格式化要返回的数据.
      *
      * @param $data
      * @return mixed
@@ -57,7 +57,7 @@ abstract class Cache
     }
 
     /**
-     * 格式化要保存的数据
+     * 格式化要保存的数据.
      *
      * @param $data
      * @return mixed
@@ -68,7 +68,7 @@ abstract class Cache
     }
 
     /**
-     * 获取缓存数据
+     * 获取缓存数据.
      *
      * @return mixed
      */
@@ -84,7 +84,7 @@ abstract class Cache
     }
 
     /**
-     * 保存缓存
+     * 保存缓存.
      *
      * @param mixed $value
      * @return mixed
@@ -99,7 +99,7 @@ abstract class Cache
     }
 
     /**
-     * 判断缓存是否存在
+     * 判断缓存是否存在.
      *
      * @return bool
      * @throws \Psr\SimpleCache\InvalidArgumentException
@@ -110,7 +110,7 @@ abstract class Cache
     }
 
     /**
-     * 删除缓存
+     * 删除缓存.
      *
      * @return mixed
      */
@@ -120,7 +120,7 @@ abstract class Cache
     }
 
     /**
-     * 获取缓存数据并删除
+     * 获取缓存数据并删除.
      *
      * @return mixed
      */
@@ -165,7 +165,7 @@ abstract class Cache
     }
 
     /**
-     * 设置过期时间
+     * 设置过期时间.
      *
      * @param int $seconds
      * @return $this
@@ -178,7 +178,7 @@ abstract class Cache
     }
 
     /**
-     * 指定过期时间
+     * 指定过期时间.
      *
      * @param string $datetime
      * @return $this
@@ -189,7 +189,7 @@ abstract class Cache
     }
 
     /**
-     * 设置缓存键名
+     * 设置缓存键名.
      *
      * @param mixed $key
      * @return $this
@@ -202,7 +202,7 @@ abstract class Cache
     }
 
     /**
-     * 获取缓存key
+     * 获取缓存key.
      *
      * @return string
      */
@@ -240,7 +240,7 @@ abstract class Cache
     }
 
     /**
-     * 清空所有缓存
+     * 清空所有缓存.
      *
      * @return mixed
      */

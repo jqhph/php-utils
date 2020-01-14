@@ -2,7 +2,7 @@
 
 if (! function_exists('array_chunk_process')) {
     /**
-     * 数组分块处理
+     * 数组分块处理.
      *
      * @param array    $items
      * @param int      $len
@@ -14,6 +14,7 @@ if (! function_exists('array_chunk_process')) {
 
         if ($count <= $len) {
             call_user_func($callback, $items, 1);
+
             return;
         }
 
@@ -28,7 +29,7 @@ if (! function_exists('array_chunk_process')) {
 
 if (! function_exists('paginate_array')) {
     /**
-     * 获取分页数组
+     * 获取分页数组.
      *
      * @param int                   $total
      * @param array|object|\Closure $list
@@ -73,7 +74,7 @@ if (! function_exists('str_snake')) {
         if (! ctype_lower($value)) {
             $value = preg_replace('/\s+/u', '', ucwords($value));
 
-            $value = mb_strtolower(preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $value), 'UTF-8');
+            $value = mb_strtolower(preg_replace('/(.)(?=[A-Z])/u', '$1'.$delimiter, $value), 'UTF-8');
         }
 
         return $snakeCache[$key][$delimiter] = $value;

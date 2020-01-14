@@ -18,7 +18,7 @@ $connection = Factory::createConnection([
     'read_write_timeout' => 10.0,
     'context' => null,
     'keepalive' => true,
-    'heartbeat' => 2
+    'heartbeat' => 2,
 ]);
 
 $channel = Factory::channel($connection);
@@ -34,13 +34,13 @@ $topic = Factory::consumer($channel)->topic($exchange, $queue);
 
 // 设置处理消息回调
 $topic->handle(function (AMQPMessage $message, \Closure $ack, \Closure $reject) {
-    $this->line("消费者收到消息啦: ".$message->body);
+    $this->line('消费者收到消息啦: '.$message->body);
 
     $this->line('start:'.date('Y-m-d H:i:s'));
 
     $time = time();
     while (1) {
-        if (time() - $time > 60*8) {
+        if (time() - $time > 60 * 8) {
             break;
         }
     }

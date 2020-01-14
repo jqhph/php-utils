@@ -5,13 +5,13 @@ namespace Dcat\Utils\Elasticsearch\Models\Responses;
 class UpdatedResponse extends Response
 {
     /**
-     * 获取修改成功数
+     * 获取修改成功数.
      *
      * @return int
      */
     public function getAffected()
     {
-        if (!empty($this->content['result'])) {
+        if (! empty($this->content['result'])) {
             // 单条update
             return $this->content['result'] == 'updated' ? 1 : 0;
         }

@@ -6,7 +6,7 @@ namespace Dcat\Utils\Elasticsearch\Models\Responses;
  * Created by PhpStorm.
  * User: jqh
  * Date: 18-8-31
- * Time: 上午10:18
+ * Time: 上午10:18.
  */
 abstract class Response
 {

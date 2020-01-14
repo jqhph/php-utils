@@ -2,8 +2,8 @@
 
 namespace Dcat\Utils\RabbitMQ;
 
-use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Connection\AbstractConnection;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class Factory
@@ -29,7 +29,7 @@ class Factory
     protected static $closed = false;
 
     /**
-     * 创建rabbit mq连接（允许配置多主机）
+     * 创建rabbit mq连接（允许配置多主机）.
      *
      * @example
      *     Factory::createConnection('amqp://root:123456@192.168.2.208:5672');
@@ -84,15 +84,15 @@ class Factory
             $config = static::parseUrls($config);
         }
 
-        if (!is_array(current($config))) {
+        if (! is_array(current($config))) {
             $config = [
                 [
                     'host' => $config['host'] ?? '127.0.0.1',
                     'port' =>  $config['port'] ?? null,
                     'user' => $config['user'] ?? null,
                     'password' => $config['password'] ?? null,
-                    'vhost' => $config['vhost'] ?? null
-                ]
+                    'vhost' => $config['vhost'] ?? null,
+                ],
             ];
         }
 
@@ -100,7 +100,7 @@ class Factory
     }
 
     /**
-     * 生产者
+     * 生产者.
      *
      * @param Channel $channel
      * @return \Dcat\Utils\RabbitMQ\Producer
@@ -113,7 +113,7 @@ class Factory
     }
 
     /**
-     * 生产者
+     * 生产者.
      *
      * @param Channel $channel
      * @return \Dcat\Utils\RabbitMQ\Consumer
@@ -136,7 +136,7 @@ class Factory
     }
 
     /**
-     * 创建持久化消息实例
+     * 创建持久化消息实例.
      *
      * @param string|null $message
      * @param array $options
@@ -151,7 +151,7 @@ class Factory
     }
 
     /**
-     * 关闭所有启动过的通道和连接
+     * 关闭所有启动过的通道和连接.
      *
      * @throws \Exception
      */
@@ -175,7 +175,7 @@ class Factory
     }
 
     /**
-     * 获取一个单例rabbit-mq连接
+     * 获取一个单例rabbit-mq连接.
      *
      * @return AbstractConnection
      */
@@ -198,14 +198,14 @@ class Factory
     }
 
     /**
-     * 批量解析url
+     * 批量解析url.
      *
      * @param string|null $url
      * @return array
      */
     public static function parseUrls(?string $url)
     {
-        if (!$url) {
+        if (! $url) {
             return [];
         }
 
@@ -218,7 +218,7 @@ class Factory
     }
 
     /**
-     * 解析单个url
+     * 解析单个url.
      *
      * @param string|null $url
      * @return array
@@ -238,6 +238,5 @@ class Factory
             'password' => $result['pass'] ?? null,
             'vhost' => trim($result['path'] ?? null, '/') ?: '/',
         ];
-
     }
 }

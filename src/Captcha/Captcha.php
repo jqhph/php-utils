@@ -3,7 +3,7 @@
 namespace Dcat\Utils\Captcha;
 
 /**
- * Laravel 5 & 6 Captcha package
+ * Laravel 5 & 6 Captcha package.
  *
  * @copyright Copyright (c) 2015 MeWebStudio
  * @version 2.x
@@ -15,10 +15,10 @@ namespace Dcat\Utils\Captcha;
  */
 
 use Exception;
-use Symfony\Component\Finder\Finder;
 use Intervention\Image\Gd\Font;
 use Intervention\Image\Image as InterventionImage;
 use Intervention\Image\ImageManager;
+use Symfony\Component\Finder\Finder;
 
 /**
  * @composer symfony/finder intervention/image
@@ -145,7 +145,7 @@ class Captcha
     protected $fontsDirectory;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array        $config
      * @param ImageManager $imageManager
@@ -156,8 +156,7 @@ class Captcha
     public function __construct(
         array $config,
         ImageManager $imageManager
-    )
-    {
+    ) {
         $this->config = $config;
         $this->imageManager = $imageManager;
         $this->characters = $config['characters'] ?? ['1', '2', '3', '4', '6', '7', '8', '9'];
@@ -165,7 +164,7 @@ class Captcha
     }
 
     /**
-     * 生成图片
+     * 生成图片.
      *
      * @param string $config
      * @return Image
@@ -209,7 +208,7 @@ class Captcha
     }
 
     /**
-     * Create captcha image
+     * Create captcha image.
      *
      * @param string $config
      * @param bool $api
@@ -218,7 +217,7 @@ class Captcha
      */
     public function build(string $config = 'default')
     {
-        $this->backgrounds = $this->files(__DIR__ . '/assets/backgrounds');
+        $this->backgrounds = $this->files(__DIR__.'/assets/backgrounds');
         $this->fonts = $this->files($this->fontsDirectory);
 
         $this->fonts = array_map(function ($file) {
@@ -271,7 +270,6 @@ class Captcha
     }
 
     /**
-     *
      * @param  string $directory
      * @param  bool   $hidden
      *
@@ -286,7 +284,7 @@ class Captcha
     }
 
     /**
-     * Image backgrounds
+     * Image backgrounds.
      *
      * @return string
      */
@@ -296,7 +294,7 @@ class Captcha
     }
 
     /**
-     * Generate captcha text
+     * Generate captcha text.
      *
      * @return array
      * @throws Exception
@@ -320,12 +318,12 @@ class Captcha
 
         return [
             'value' => $bag,
-            'key'   => (string) $key
+            'key'   => (string) $key,
         ];
     }
 
     /**
-     * Writing captcha text
+     * Writing captcha text.
      *
      * @return void
      */
@@ -353,7 +351,7 @@ class Captcha
     }
 
     /**
-     * Image fonts
+     * Image fonts.
      *
      * @return string
      */
@@ -363,7 +361,7 @@ class Captcha
     }
 
     /**
-     * Random font size
+     * Random font size.
      *
      * @return int
      */
@@ -373,22 +371,23 @@ class Captcha
     }
 
     /**
-     * Random font color
+     * Random font color.
      *
      * @return string
      */
     protected function fontColor(): string
     {
-        if (!empty($this->fontColors)) {
+        if (! empty($this->fontColors)) {
             $color = $this->fontColors[rand(0, count($this->fontColors) - 1)];
         } else {
-            $color = '#' . str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT);
+            $color = '#'.str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT);
         }
+
         return $color;
     }
 
     /**
-     * Angle
+     * Angle.
      *
      * @return int
      */
@@ -398,7 +397,7 @@ class Captcha
     }
 
     /**
-     * Random image lines
+     * Random image lines.
      *
      * @return Image|ImageManager
      */

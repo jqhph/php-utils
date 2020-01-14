@@ -15,7 +15,6 @@ class FindIdResponse extends Response
         $this->model = $model;
     }
 
-
     /**
      * 判断是否查找成功
      *
@@ -37,7 +36,7 @@ class FindIdResponse extends Response
     }
 
     /**
-     * 转化为数组
+     * 转化为数组.
      *
      * @return array
      */
@@ -47,7 +46,7 @@ class FindIdResponse extends Response
     }
 
     /**
-     * 转化为json
+     * 转化为json.
      *
      * @return string
      */

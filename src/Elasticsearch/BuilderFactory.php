@@ -3,7 +3,6 @@
 namespace Dcat\Utils\Elasticsearch;
 
 use Elasticsearch\Client;
-use Elasticsearch\Serializers\SmartSerializer;
 use Elasticsearch\ClientBuilder;
 
 class BuilderFactory
@@ -13,7 +12,7 @@ class BuilderFactory
     public static $hosts = [];
 
     /**
-     * 创建一个新的Builder实例
+     * 创建一个新的Builder实例.
      *
      * @param array|string $host 192.168.2.66:9200
      * @return ClientBuilder
@@ -28,7 +27,7 @@ class BuilderFactory
     }
 
     /**
-     * 获取单例Client实例
+     * 获取单例Client实例.
      *
      * @return Client
      */

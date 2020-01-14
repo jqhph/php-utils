@@ -33,56 +33,56 @@ class Fields
     ];
 
     /**
-     * 自定义格式化回调
+     * 自定义格式化回调.
      *
      * @var array
      */
     protected $customFormatters = [];
 
     /**
-     * 允许的字段
+     * 允许的字段.
      *
      * @var array
      */
     protected $allowedFields = [];
 
     /**
-     * 不允许的字段
+     * 不允许的字段.
      *
      * @var array
      */
     protected $denyFields = [];
 
     /**
-     * 当值为true时则所有字段都允许为 null
+     * 当值为true时则所有字段都允许为 null.
      *
      * @var array|true
      */
     protected $nullableFields = [];
 
     /**
-     * 当值为true时则所有字段都将转化为 int
+     * 当值为true时则所有字段都将转化为 int.
      *
      * @var array|true
      */
     protected $intFields = [];
 
     /**
-     * 当值为true时则所有字段都将转化为 float
+     * 当值为true时则所有字段都将转化为 float.
      *
      * @var array|true
      */
     protected $floatFields = [];
 
     /**
-     * 当值为true时则所有字段都将转化为 array
+     * 当值为true时则所有字段都将转化为 array.
      *
      * @var array|true
      */
     protected $arrayFields = [];
 
     /**
-     * 默认值设置
+     * 默认值设置.
      *
      * @var array
      */
@@ -97,14 +97,14 @@ class Fields
     }
 
     /**
-     * 初始化自定义字段格式化功能
+     * 初始化自定义字段格式化功能.
      */
     protected function init()
     {
     }
 
     /**
-     * 注册自定义字段格式化回调方法
+     * 注册自定义字段格式化回调方法.
      *
      * @param string|array $field
      * @param \Closure $callback
@@ -125,7 +125,7 @@ class Fields
     }
 
     /**
-     * 格式化多行
+     * 格式化多行.
      *
      * @param array $rows
      *
@@ -141,7 +141,7 @@ class Fields
     }
 
     /**
-     * 格式化单行数据
+     * 格式化单行数据.
      *
      * @param array $row
      *
@@ -289,7 +289,7 @@ class Fields
     }
 
     /**
-     * 设置所有允许的字段
+     * 设置所有允许的字段.
      *
      * @param array $row
      *
@@ -346,7 +346,7 @@ class Fields
     }
 
     /**
-     * 格式化并返回一个新数组
+     * 格式化并返回一个新数组.
      *
      * @param array $row
      *

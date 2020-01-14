@@ -8,22 +8,21 @@ use PhpAmqpLib\Exchange\AMQPExchangeType;
 use PhpAmqpLib\Message\AMQPMessage;
 
 /**
- * 生产者主题模式
+ * 生产者主题模式.
  *
  * Class Topic
- * @package Dcat\Utils\RabbitMQ\Producer
  */
 class Topic extends Producer implements TopicProducer
 {
     /**
-     * 推送消息的交换机名称
+     * 推送消息的交换机名称.
      *
      * @var string
      */
     protected $exchange;
 
     /**
-     * 路由名称
+     * 路由名称.
      *
      * @var string
      */
@@ -34,7 +33,7 @@ class Topic extends Producer implements TopicProducer
      */
     protected $exchangeDeclared;
 
-    public function __construct(Channel $channel, ?string $exchange,  ?string $route)
+    public function __construct(Channel $channel, ?string $exchange, ?string $route)
     {
         $this->setChannel($channel);
         $this->setExchange($exchange);
@@ -42,7 +41,7 @@ class Topic extends Producer implements TopicProducer
     }
 
     /**
-     * 发布消息
+     * 发布消息.
      *
      * @param AMQPMessage[] $messages 批量推送
      * @param bool $mandatory
@@ -57,11 +56,10 @@ class Topic extends Producer implements TopicProducer
 
         // 发布消息
         $this->basicPublish($this->exchange, $this->route, $messages, $mandatory, $immediate, $ticket);
-
     }
 
     /**
-     * 声明交换机exchange
+     * 声明交换机exchange.
      *
      * @param bool   $passive 检查是否存在
      * @param bool   $durable 是否持久————决定机器重启时候是否自动恢复
@@ -77,10 +75,9 @@ class Topic extends Producer implements TopicProducer
         $auto_delete = false,
         $internal = false,
         $nowait = false,
-        $arguments = array(),
+        $arguments = [],
         $ticket = null
-    )
-    {
+    ) {
         if ($this->exchangeDeclared) {
             return;
         }
@@ -138,5 +135,4 @@ class Topic extends Producer implements TopicProducer
     {
         return $this->route;
     }
-
 }
