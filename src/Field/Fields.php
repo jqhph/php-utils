@@ -179,6 +179,7 @@ class Fields
                     $result[$field] = $this->prepareValue(
                         $field,
                         $this->$method($result, $field, $nullable),
+                        $result,
                         $row
                     );
 
@@ -190,6 +191,7 @@ class Fields
             $result[$field] = $this->prepareValue(
                 $field,
                 $this->formatStringField($result, $field, $nullable),
+                $result,
                 $row
             );
         }
@@ -200,25 +202,26 @@ class Fields
     /**
      * @param string $field
      * @param mixed  $value
+     * @param array  $row
      * @param array  $orginalRow
      *
      * @return mixed
      */
-    protected function prepareValue($field, $value, array $orginalRow)
+    protected function prepareValue($field, $value, array $row, array $orginalRow)
     {
         if (! isset($this->customFormatters[$field])) {
             return $value;
         }
 
         foreach ($this->customFormatters[$field] as $callback) {
-            $value = $callback($value, $field, $orginalRow);
+            $value = $callback($value, $row, $orginalRow, $field);
         }
 
         return $value;
     }
 
     /**
-     * 字段重命名.
+     * 字段重命名
      *
      * @param array $row
      *
