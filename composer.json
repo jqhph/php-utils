@@ -1,0 +1,38 @@
+{
+  "name": "dcat/utils",
+  "description": "日常使用的工具集",
+  "type": "library",
+  "keywords": ["dcat", "utils"],
+  "homepage": "https://github.com/jqhph/php-utils",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "jqh",
+      "email": "841324345@qq.com"
+    }
+  ],
+  "require": {
+    "php": ">=7"
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "Dcat\\Utils\\": "src/"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+
+    },
+    "classmap": [
+      "tests/TestCase.php"
+    ]
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpunit"
+  }
+}
