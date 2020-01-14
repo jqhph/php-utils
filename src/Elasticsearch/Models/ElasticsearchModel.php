@@ -12,7 +12,7 @@ use Dcat\Utils\Elasticsearch\Models\Responses\UpdatedResponse;
 use Elasticsearch\Client;
 
 /**
- * ES模型基类（支持ES7.0或以上版本）
+ * ES模型基类（支持ES7.0或以上版本）.
  *
  * Created by PhpStorm.
  * User: jqh
@@ -41,7 +41,7 @@ use Elasticsearch\Client;
 class ElasticsearchModel
 {
     /**
-     * 索引名称（如果索引定义了别名，此处也可以使用别名代替）
+     * 索引名称（如果索引定义了别名，此处也可以使用别名代替）.
      *
      * @var string
      */
@@ -55,7 +55,7 @@ class ElasticsearchModel
     protected $client;
 
     /**
-     * 获取索引名称
+     * 获取索引名称.
      *
      * @return string
      */
@@ -114,7 +114,7 @@ class ElasticsearchModel
     }
 
     /**
-     * 获取ES客户端
+     * 获取ES客户端.
      *
      * @return Client
      */

@@ -3,12 +3,11 @@
 namespace Dcat\Utils\RabbitMQ\Contracts;
 
 use Dcat\Utils\RabbitMQ\Channel;
-use PhpAmqpLib\Message\AMQPMessage;
 
 interface Consumer
 {
     /**
-     * 开始消费
+     * 开始消费.
      *
      * @param string $consumer_tag
      * @param bool $no_local
@@ -26,11 +25,11 @@ interface Consumer
         $exclusive = false,
         $nowait = false,
         $ticket = null,
-        $arguments = array()
+        $arguments = []
     );
 
     /**
-     * 设置处理消息回调
+     * 设置处理消息回调.
      *
      * @param callable $callback
      * @return $this
@@ -59,5 +58,4 @@ interface Consumer
      * @return int
      */
     public function getPrefetchCount();
-
 }

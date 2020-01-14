@@ -23,7 +23,7 @@ class ActionMiddlewareOptions
     }
 
     /**
-     * 首先执行
+     * 首先执行.
      *
      * @return $this
      */
@@ -35,7 +35,7 @@ class ActionMiddlewareOptions
     }
 
     /**
-     * 最后执行
+     * 最后执行.
      *
      * @return $this
      */

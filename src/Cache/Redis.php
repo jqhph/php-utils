@@ -21,7 +21,7 @@ abstract class Redis extends Cache
     protected $storage;
 
     /**
-     * 初始化
+     * 初始化.
      *
      * @throws \Exception
      */
@@ -33,7 +33,7 @@ abstract class Redis extends Cache
     }
 
     /**
-     * 获取缓存数据
+     * 获取缓存数据.
      *
      * @return mixed
      */
@@ -41,11 +41,11 @@ abstract class Redis extends Cache
     {
         $this->initStorage();
 
-        throw new \Exception("Redis缓存请手动实现get方法");
+        throw new \Exception('Redis缓存请手动实现get方法');
     }
 
     /**
-     * 保存缓存
+     * 保存缓存.
      *
      * @param mixed $value
      * @return mixed
@@ -54,11 +54,11 @@ abstract class Redis extends Cache
     {
         $this->initStorage();
 
-        throw new \Exception("Redis缓存请手动实现store方法");
+        throw new \Exception('Redis缓存请手动实现store方法');
     }
 
     /**
-     * 判断缓存是否存在
+     * 判断缓存是否存在.
      *
      * @return bool
      * @throws \Psr\SimpleCache\InvalidArgumentException
@@ -67,11 +67,11 @@ abstract class Redis extends Cache
     {
         $this->initStorage();
 
-        throw new \Exception("Redis缓存请手动实现exist方法");
+        throw new \Exception('Redis缓存请手动实现exist方法');
     }
 
     /**
-     * 删除缓存
+     * 删除缓存.
      *
      * @return mixed
      */
@@ -79,7 +79,7 @@ abstract class Redis extends Cache
     {
         $this->initStorage();
 
-        throw new \Exception("Redis缓存请手动实现forget方法");
+        throw new \Exception('Redis缓存请手动实现forget方法');
     }
 
     /**

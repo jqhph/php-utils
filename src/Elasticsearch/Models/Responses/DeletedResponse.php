@@ -13,5 +13,4 @@ class DeletedResponse extends Response
     {
         return ($this->content['result'] ?? '') == 'deleted' ? true : false;
     }
-
 }

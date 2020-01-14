@@ -8,22 +8,21 @@ use Dcat\Utils\RabbitMQ\Queue;
 use PhpAmqpLib\Exchange\AMQPExchangeType;
 
 /**
- * 消费者主题模式
+ * 消费者主题模式.
  *
  * Class Topic
- * @package Dcat\Utils\RabbitMQ\Consumer
  */
 class Topic extends Consumer implements TopicConsumer
 {
     /**
-     * 推送消息的交换机名称
+     * 推送消息的交换机名称.
      *
      * @var string
      */
     protected $exchange;
 
     /**
-     * 队列以及绑定路由指定
+     * 队列以及绑定路由指定.
      *
      * @var Queue
      */
@@ -34,7 +33,7 @@ class Topic extends Consumer implements TopicConsumer
      */
     protected $exchangeDeclared;
 
-    public function __construct(Channel $channel, ?string $exchange,  Queue $queue)
+    public function __construct(Channel $channel, ?string $exchange, Queue $queue)
     {
         $this->setChannel($channel);
         $this->setExchange($exchange);
@@ -42,7 +41,7 @@ class Topic extends Consumer implements TopicConsumer
     }
 
     /**
-     * 开始消费
+     * 开始消费.
      *
      * @param string $consumer_tag
      * @param bool $no_local
@@ -60,9 +59,8 @@ class Topic extends Consumer implements TopicConsumer
         $exclusive = false,
         $nowait = false,
         $ticket = null,
-        $arguments = array()
-    )
-    {
+        $arguments = []
+    ) {
         // 生命交换机
         $this->exchangeDeclare(false, true, false);
 
@@ -89,14 +87,14 @@ class Topic extends Consumer implements TopicConsumer
     }
 
     /**
-     * 声明队列，绑定交换机和路由
+     * 声明队列，绑定交换机和路由.
      *
      * @return string
      * @throws \Exception
      */
     protected function queueDeclare()
     {
-        if (!$this->queue) {
+        if (! $this->queue) {
             throw new \Exception('主题模式消费消息出错，未定义队列');
         }
         if (empty($this->queue->getRoutes())) {
@@ -125,7 +123,7 @@ class Topic extends Consumer implements TopicConsumer
     }
 
     /**
-     * 声明交换机exchange
+     * 声明交换机exchange.
      *
      * @param bool   $passive 检查是否存在
      * @param bool   $durable 是否持久————决定机器重启时候是否自动恢复
@@ -141,10 +139,9 @@ class Topic extends Consumer implements TopicConsumer
         $auto_delete = false,
         $internal = false,
         $nowait = false,
-        $arguments = array(),
+        $arguments = [],
         $ticket = null
-    )
-    {
+    ) {
         if ($this->exchangeDeclared) {
             return;
         }

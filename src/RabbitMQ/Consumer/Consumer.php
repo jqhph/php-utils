@@ -3,14 +3,13 @@
 namespace Dcat\Utils\RabbitMQ\Consumer;
 
 use Dcat\Utils\RabbitMQ\Channel;
-use PhpAmqpLib\Message\AMQPMessage;
 use Dcat\Utils\RabbitMQ\Contracts\Consumer as ConsumerInterface;
+use PhpAmqpLib\Message\AMQPMessage;
 
 /**
- * 消费者
+ * 消费者.
  *
  * Class Consumer
- * @package Dcat\Utils\RabbitMQ\Consumer
  */
 abstract class Consumer implements ConsumerInterface
 {
@@ -27,7 +26,7 @@ abstract class Consumer implements ConsumerInterface
     ];
 
     /**
-     * 设置消费者一次处理消息的数量
+     * 设置消费者一次处理消息的数量.
      *
      * @var int
      */
@@ -39,7 +38,7 @@ abstract class Consumer implements ConsumerInterface
     }
 
     /**
-     * 设置处理消息回调
+     * 设置处理消息回调.
      *
      * @param callable $callback
      * @return $this
@@ -85,7 +84,7 @@ abstract class Consumer implements ConsumerInterface
     }
 
     /**
-     * 等待队列消费完毕
+     * 等待队列消费完毕.
      */
     protected function waitWhenConsuming()
     {
@@ -136,5 +135,4 @@ abstract class Consumer implements ConsumerInterface
     {
         return $this->channel;
     }
-
 }

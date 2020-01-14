@@ -6,7 +6,7 @@ use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Arr;
 
 /**
- * 动作执行器
+ * 动作执行器.
  */
 class Executor
 {
@@ -16,21 +16,21 @@ class Executor
     protected $action;
 
     /**
-     * 用户输入数据
+     * 用户输入数据.
      *
      * @var array
      */
     protected $input = [];
 
     /**
-     * 公共中间件
+     * 公共中间件.
      *
      * @var array
      */
     protected static $middlewares = [];
 
     /**
-     * 分组后的中间件数组
+     * 分组后的中间件数组.
      *
      * @var array
      */
@@ -39,11 +39,11 @@ class Executor
     public function __construct(ActionInterface $action, array $input = [])
     {
         $this->action = $action;
-        $this->input  = $input;
+        $this->input = $input;
     }
 
     /**
-     * 执行动作
+     * 执行动作.
      *
      * @param \Closure $handler
      * @return mixed
@@ -61,7 +61,7 @@ class Executor
     }
 
     /**
-     * 执行动作
+     * 执行动作.
      *
      * @param \Closure $handler
      * @return mixed
@@ -87,7 +87,7 @@ class Executor
     }
 
     /**
-     * 注册公共中间件
+     * 注册公共中间件.
      *
      * @param  array|string  $middleware
      * @param  array   $options
@@ -106,7 +106,7 @@ class Executor
     }
 
     /**
-     * 合并公共中间件
+     * 合并公共中间件.
      *
      * @return array
      */
@@ -120,7 +120,7 @@ class Executor
     }
 
     /**
-     * 生成中间件分组
+     * 生成中间件分组.
      *
      * @return array
      */

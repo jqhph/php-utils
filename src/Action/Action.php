@@ -5,21 +5,21 @@ namespace Dcat\Utils\Action;
 use Illuminate\Support\Facades\Validator as ValidatorFactory;
 
 /**
- * 动作类基类
+ * 动作类基类.
  */
 abstract class Action implements ActionInterface
 {
     use HasHook;
 
     /**
-     * 中间件
+     * 中间件.
      *
      * @var array
      */
     protected $middlewares = [];
 
     /**
-     * 验证器规则
+     * 验证器规则.
      *
      * @var array
      * @example {"data": "required|json"}
@@ -32,7 +32,7 @@ abstract class Action implements ActionInterface
     protected $withoutRules = false;
 
     /**
-     * 验证器错误信息
+     * 验证器错误信息.
      *
      * @var array
      * @example {"data.required": "data字段是必须的"}
@@ -45,7 +45,7 @@ abstract class Action implements ActionInterface
     protected $input = [];
 
     /**
-     * 获取中间件
+     * 获取中间件.
      *
      * @return array
      */
@@ -55,7 +55,7 @@ abstract class Action implements ActionInterface
     }
 
     /**
-     * 返回验证器规则
+     * 返回验证器规则.
      *
      * @return array {"data": "required|json"}
      */
@@ -65,7 +65,7 @@ abstract class Action implements ActionInterface
     }
 
     /**
-     * 返回验证器错误信息
+     * 返回验证器错误信息.
      *
      * @return array {"data.required": "data字段是必须的"}
      */
@@ -75,7 +75,7 @@ abstract class Action implements ActionInterface
     }
 
     /**
-     * 在验证参数之前过滤用户输入参数
+     * 在验证参数之前过滤用户输入参数.
      *
      * @param array $input
      * @return void
@@ -85,7 +85,7 @@ abstract class Action implements ActionInterface
     }
 
     /**
-     * 验证用户输入参数
+     * 验证用户输入参数.
      *
      * @param  array|null $input 用户输入数据
      * @return void
@@ -114,7 +114,7 @@ abstract class Action implements ActionInterface
     }
 
     /**
-     * 执行动作
+     * 执行动作.
      *
      * @param array $input
      * @return mixed
@@ -148,7 +148,7 @@ abstract class Action implements ActionInterface
     }
 
     /**
-     * 执行动作逻辑
+     * 执行动作逻辑.
      *
      * @param  array  $input
      * @return mixed
@@ -156,7 +156,7 @@ abstract class Action implements ActionInterface
     abstract protected function process(array $input = []);
 
     /**
-     * 实例化当前动作类
+     * 实例化当前动作类.
      *
      * @param  mixed  ...$parameters
      * @return static
@@ -167,7 +167,7 @@ abstract class Action implements ActionInterface
     }
 
     /**
-     * 实例化当前动作类并执行
+     * 实例化当前动作类并执行.
      *
      * @param array $input
      * @return mixed

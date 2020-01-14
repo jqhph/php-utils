@@ -18,13 +18,12 @@ class Consumer
     }
 
     /**
-     * 消费者主题模式
+     * 消费者主题模式.
      *
      * @return TopicConsumer|\Dcat\Utils\RabbitMQ\Contracts\Consumer
      */
-    public function topic(?string $exchange,  Queue $queue)
+    public function topic(?string $exchange, Queue $queue)
     {
         return new Topic($this->channel, $exchange, $queue);
     }
-
 }

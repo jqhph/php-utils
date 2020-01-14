@@ -15,7 +15,7 @@ class BacktraceFormatter
     }
 
     /**
-     * 转化成字符串
+     * 转化成字符串.
      *
      * @return string
      */
@@ -100,7 +100,7 @@ class BacktraceFormatter
             $result[] = $v;
         }
 
-        return '('.join(', ', $result).')';
+        return '('.implode(', ', $result).')';
     }
 
     /**

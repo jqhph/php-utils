@@ -3,50 +3,49 @@
 namespace Dcat\Utils\RabbitMQ;
 
 /**
- * RabbitMQ队列定义
+ * RabbitMQ队列定义.
  *
  * Class Queue
- * @package Dcat\Utils\RabbitMQ
  */
 class Queue
 {
     /**
-     * 队列名称（不填系统会自动生成）
+     * 队列名称（不填系统会自动生成）.
      *
      * @var string
      */
     protected $name;
 
     /**
-     * 绑定路由（仅topic和direct模式需要）
+     * 绑定路由（仅topic和direct模式需要）.
      *
      * @var array
      */
     protected $routes = [];
 
     /**
-     * 检查队列名称是否存在，有就返回给你，没有报错
+     * 检查队列名称是否存在，有就返回给你，没有报错.
      *
      * @var bool
      */
     protected $passive = false;
 
     /**
-     * 队列是否是持久化，默认true
+     * 队列是否是持久化，默认true.
      *
      * @var bool
      */
     protected $durable = true;
 
     /**
-     * 代表只能在当前channel下通信。当连接断开队列会消失,不管是不是持久(很重要)
+     * 代表只能在当前channel下通信。当连接断开队列会消失,不管是不是持久(很重要).
      *
      * @var bool
      */
     protected $exclusive = false;
 
     /**
-     * 是否自动删除，默认否
+     * 是否自动删除，默认否.
      *
      * @var bool
      */
@@ -58,11 +57,11 @@ class Queue
     protected $nowait = false;
 
     /**
-     * 扩展参数
+     * 扩展参数.
      *
      * @var array
      */
-    protected $arguments = array();
+    protected $arguments = [];
 
     protected $ticket = null;
 

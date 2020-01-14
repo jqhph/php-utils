@@ -24,7 +24,7 @@ class Query
     }
 
     /**
-     * 新增文档
+     * 新增文档.
      *
      * @param array $attributes
      *
@@ -38,7 +38,7 @@ class Query
         $opt = $this->prepareParams(
             [
                 'index' => $index ?: $this->model->getIndex(),
-                'body'  => $attributes
+                'body'  => $attributes,
             ]
         );
 
@@ -50,7 +50,7 @@ class Query
     }
 
     /**
-     * 批量新增
+     * 批量新增.
      *
      * @param array $rows
      *
@@ -58,7 +58,7 @@ class Query
      */
     public function batchInsert(array $rows, $index = null)
     {
-        if (!$rows) {
+        if (! $rows) {
             return new BulkResponse([]);
         }
 
@@ -81,7 +81,7 @@ class Query
             }
 
             $params['body'][] = [
-                'index' => $body
+                'index' => $body,
             ];
 
             $params['body'][] = $row instanceof self ? $row->toArray() : $row;
@@ -91,14 +91,14 @@ class Query
     }
 
     /**
-     * Delete data by id
+     * Delete data by id.
      *
      * @param mixed $id ID
      * @return DeletedResponse
      */
     public function deleteById($id, $index = null)
     {
-        if (!$id) {
+        if (! $id) {
             return new DeletedResponse([]);
         }
         try {
@@ -118,7 +118,7 @@ class Query
     }
 
     /**
-     * Delete by ids
+     * Delete by ids.
      *
      * @param array $ids
      *
@@ -126,7 +126,7 @@ class Query
      */
     public function deleteByIds(array $ids, $index = null)
     {
-        if (!$ids) {
+        if (! $ids) {
             return new DeletedResponse($ids);
         }
 
@@ -137,13 +137,13 @@ class Query
                         '_id' => array_values($ids),
                     ],
                 ],
-            ]
+            ],
 
         ], $index);
     }
 
     /**
-     * 根据条件删除数据
+     * 根据条件删除数据.
      *
      * @param array $condition
      * @return DeletedResponse
@@ -165,7 +165,7 @@ class Query
     }
 
     /**
-     * 根据ID查找数据
+     * 根据ID查找数据.
      *
      * @param $id
      * @param mixed $fields
@@ -211,7 +211,7 @@ class Query
     }
 
     /**
-     * 查找单行数据
+     * 查找单行数据.
      *
      * @param array $condition
      * @param null $fields
@@ -229,7 +229,7 @@ class Query
     }
 
     /**
-     * 查找数据
+     * 查找数据.
      *
      * @param array $condition
      * @param string|null $fields
@@ -248,8 +248,7 @@ class Query
         $size = null,
         $opts = [],
         $index = null
-    )
-    {
+    ) {
         $params = $this->prepareParams(
             [
                 'index' => $index ?: $this->model->getIndex(),
@@ -263,7 +262,7 @@ class Query
                     'must'     => [],
                     'must_not' => [],
                     'should'   => [['match_all' => (object) []]],
-                ]
+                ],
             ];
         }
 
@@ -291,7 +290,7 @@ class Query
     }
 
     /**
-     * 查找所有数据
+     * 查找所有数据.
      *
      * @param null $fields
      * @param array $sort
@@ -309,8 +308,7 @@ class Query
         ?int $size = null,
         ?array $opts = [],
         $index = null
-    )
-    {
+    ) {
         return $this->find(
             [],
             $fields,
@@ -323,7 +321,7 @@ class Query
     }
 
     /**
-     * 聚合
+     * 聚合.
      *
      * @param array $aggs
      * @param array $condition
@@ -336,13 +334,12 @@ class Query
     public function aggregate(
         array $aggs,
         array $condition = [],
-        $fields  = null,
+        $fields = null,
         $sort = null,
         $from = null,
         $size = null,
         $index = null
-    )
-    {
+    ) {
         $params = $this->prepareParams(
             [
                 'index' => $index ?: $this->model->getIndex(),
@@ -364,7 +361,7 @@ class Query
         if ($size !== null) {
             $params['body']['size'] = $size;
         }
-        $params['body']['aggs']  = &$aggs;
+        $params['body']['aggs'] = &$aggs;
         if ($condition) {
             $params['body']['query'] = &$condition;
         }
@@ -373,7 +370,7 @@ class Query
     }
 
     /**
-     * 统计数量
+     * 统计数量.
      *
      * @param array $condition 不传则查询所有数据
      *
@@ -393,8 +390,8 @@ class Query
                 'bool' => [
                     'must' => [],
                     'must_not' => [],
-                    'should' => [['match_all' => (object) []],],
-                ]
+                    'should' => [['match_all' => (object) []]],
+                ],
             ];
         }
 
@@ -403,11 +400,11 @@ class Query
         }
         $data = $this->getClient()->count($params);
 
-        return $data ? (int)$data['count'] : 0;
+        return $data ? (int) $data['count'] : 0;
     }
 
     /**
-     * 根据条件批量修改接口
+     * 根据条件批量修改接口.
      *
      * @param array $attributes
      * @param array $condition
@@ -422,8 +419,8 @@ class Query
                     'query' => &$condition,
                     'script' => [
                         'source' => static::getUpdateScript($attributes),
-                    ]
-                ]
+                    ],
+                ],
             ]
         );
 
@@ -451,7 +448,7 @@ class Query
     }
 
     /**
-     * 根据id批量删除
+     * 根据id批量删除.
      *
      * @param array $rows
      * @param array $ids
@@ -459,14 +456,14 @@ class Query
      */
     public function batchUpdate(array $rows, $index = null)
     {
-        if (!$rows) {
+        if (! $rows) {
             return new BatchUpdatedResponse([]);
         }
 
         $params = ['body' => []];
         foreach ($rows as &$row) {
             $id = $row['_id'] ?? null;
-            if (!$id) {
+            if (! $id) {
                 throw new \InvalidArgumentException('批量修改必须设置“_id”字段');
             }
             unset($row['_id']);
@@ -478,7 +475,7 @@ class Query
                         '_id'    => $id,
                     ],
                     '_type'
-                )
+                ),
             ];
             $params['body'][]['doc'] = $row;
         }
@@ -487,7 +484,7 @@ class Query
     }
 
     /**
-     * 根据id批量删除
+     * 根据id批量删除.
      *
      * @param array|static $attributes
      * @param array $ids
@@ -495,7 +492,7 @@ class Query
      */
     public function updateByIds($attributes, array $ids, $index = null)
     {
-        if (!$ids) {
+        if (! $ids) {
             return new BatchUpdatedResponse([]);
         }
 
@@ -510,7 +507,7 @@ class Query
     }
 
     /**
-     * 修改文档内容
+     * 修改文档内容.
      *
      * @param array $attributes
      * @param string $id
@@ -519,7 +516,7 @@ class Query
      */
     public function updateById(array $attributes, $id, $index = null)
     {
-        if (!$id) {
+        if (! $id) {
             throw new \InvalidArgumentException('id不能为空');
         }
 
@@ -531,7 +528,7 @@ class Query
                         'id'    => $id,
 
                         'body' => [
-                            'doc' => $attributes
+                            'doc' => $attributes,
                         ],
                     ]
                 )
@@ -540,7 +537,7 @@ class Query
     }
 
     /**
-     * 嵌套对象内容追加
+     * 嵌套对象内容追加.
      *
      * @param array $ids ES的id
      * @param string $column 嵌套对象字段名称
@@ -549,7 +546,7 @@ class Query
      */
     public function appendToEmbeddedByIds(array $ids, string $column, array $content, $index = null)
     {
-        if (!$ids) {
+        if (! $ids) {
             return new UpdatedResponse([]);
         }
 
@@ -562,14 +559,14 @@ class Query
                         '_id'    => $id,
                     ],
                     '_type'
-                )
+                ),
             ];
             $params['body'][] = [
                 'script' => [
                     'inline' => "if (ctx._source.$column == null) { ctx._source.$column = params.$column } else { ctx._source.{$column}.add(params.{$column}) }",
                     'params' => [
                         $column => &$content,
-                    ]
+                    ],
                 ],
 
             ];
@@ -577,7 +574,6 @@ class Query
 
         return new UpdatedResponse($this->getClient()->bulk($params));
     }
-
 
     /**
      * @param array  $params

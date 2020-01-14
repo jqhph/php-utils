@@ -3,12 +3,12 @@
 namespace Dcat\Utils\Action;
 
 /**
- * 动作类接口
+ * 动作类接口.
  */
 interface ActionInterface
 {
     /**
-     * 执行动作
+     * 执行动作.
      *
      * @param array $options
      * @return mixed

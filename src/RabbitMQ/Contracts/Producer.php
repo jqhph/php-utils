@@ -8,7 +8,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 interface Producer
 {
     /**
-     * 发布消息
+     * 发布消息.
      *
      * @param AMQPMessage[] $msg 批量推送
      * @param bool $mandatory
@@ -19,7 +19,7 @@ interface Producer
     public function publish(array $msg, $mandatory = false, $immediate = false, $ticket = null);
 
     /**
-     * 设置收到应答消息回调
+     * 设置收到应答消息回调.
      *
      * @param callable $callback
      * @return $this
@@ -27,7 +27,7 @@ interface Producer
     public function ack(callable $callback);
 
     /**
-     * 设置无应答回调(推送消息丢失)
+     * 设置无应答回调(推送消息丢失).
      *
      * @param callable $callback
      * @return $this
@@ -35,7 +35,7 @@ interface Producer
     public function neck(callable $callback);
 
     /**
-     * 设置收到发布消息失败回调
+     * 设置收到发布消息失败回调.
      *
      * @example
      *  $topic->failed(function ($code, $text, $exchange, $routingKey, AMQPMessage $message) {
@@ -58,5 +58,4 @@ interface Producer
      * @return Channel
      */
     public function getChannel(): Channel;
-
 }

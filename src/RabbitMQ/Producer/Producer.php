@@ -7,10 +7,9 @@ use Dcat\Utils\RabbitMQ\Contracts\Producer as ProducerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 
 /**
- * 生产者
+ * 生产者.
  *
  * Class Topic
- * @package Dcat\Utils\RabbitMQ\Producer
  */
 abstract class Producer implements ProducerInterface
 {
@@ -34,7 +33,7 @@ abstract class Producer implements ProducerInterface
     }
 
     /**
-     * 设置收到应答消息回调
+     * 设置收到应答消息回调.
      *
      * @param callable $callback
      * @return $this
@@ -47,7 +46,7 @@ abstract class Producer implements ProducerInterface
     }
 
     /**
-     * 设置无应答回调(推送消息丢失)
+     * 设置无应答回调(推送消息丢失).
      *
      * @param callable $callback
      * @return $this
@@ -60,7 +59,7 @@ abstract class Producer implements ProducerInterface
     }
 
     /**
-     * 设置收到发布消息失败回调
+     * 设置收到发布消息失败回调.
      *
      * @example
      *  $topic->failed(function ($code, $text, $exchange, $routingKey, AMQPMessage $message) {
@@ -77,9 +76,8 @@ abstract class Producer implements ProducerInterface
         return $this;
     }
 
-
     /**
-     * 设置收到应答消息回调
+     * 设置收到应答消息回调.
      */
     protected function setAckHandler()
     {
@@ -94,7 +92,7 @@ abstract class Producer implements ProducerInterface
     }
 
     /**
-     * 设置无应答回调(推送消息丢失)
+     * 设置无应答回调(推送消息丢失).
      */
     protected function setNackHandler()
     {
@@ -109,7 +107,7 @@ abstract class Producer implements ProducerInterface
     }
 
     /**
-     *  设置收到发布消息失败回调
+     *  设置收到发布消息失败回调.
      */
     protected function setReturnListener()
     {
@@ -124,7 +122,7 @@ abstract class Producer implements ProducerInterface
     }
 
     /**
-     * 启用应答模式
+     * 启用应答模式.
      */
     protected function confirmSelect()
     {
@@ -134,7 +132,7 @@ abstract class Producer implements ProducerInterface
     /**
      * 等待应答消息返回
      * 如果消息已落地到队列会返回“ack”消息
-     * 如果失败会返回“nack”消息
+     * 如果失败会返回“nack”消息.
      */
     protected function waitForPendingAcksReturns()
     {
@@ -142,7 +140,7 @@ abstract class Producer implements ProducerInterface
     }
 
     /**
-     * 发布消息
+     * 发布消息.
      *
      * @param string $exchange
      * @param string $route
@@ -159,8 +157,7 @@ abstract class Producer implements ProducerInterface
         $mandatory = false,
         $immediate = false,
         $ticket = null
-    )
-    {
+    ) {
         // 设置收到消息应答回调
         $this->setAckHandler();
 
@@ -206,5 +203,4 @@ abstract class Producer implements ProducerInterface
     {
         return $this->channel;
     }
-
 }

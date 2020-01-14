@@ -5,7 +5,7 @@ namespace Dcat\Utils\Elasticsearch\Models\Responses;
 class CreatedResponse extends Response
 {
     /**
-     * 获取新增id
+     * 获取新增id.
      *
      * @return string
      */

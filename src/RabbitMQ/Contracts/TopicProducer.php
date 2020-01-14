@@ -5,7 +5,7 @@ namespace Dcat\Utils\RabbitMQ\Contracts;
 interface TopicProducer
 {
     /**
-     * 声明交换机exchange
+     * 声明交换机exchange.
      *
      * @param bool   $passive 检查是否存在
      * @param bool   $durable 是否持久————决定机器重启时候是否自动恢复
@@ -21,7 +21,7 @@ interface TopicProducer
         $auto_delete = false,
         $internal = false,
         $nowait = false,
-        $arguments = array(),
+        $arguments = [],
         $ticket = null
     );
 

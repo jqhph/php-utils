@@ -49,11 +49,12 @@ class ListResponse extends Response
         if ($key === null) {
             return $this->aggregations;
         }
+
         return $this->aggregations[$key] ?? [];
     }
 
     /**
-     * 获取id数组
+     * 获取id数组.
      *
      * @return array
      */
@@ -65,7 +66,7 @@ class ListResponse extends Response
     }
 
     /**
-     * 获取指定字段数组
+     * 获取指定字段数组.
      *
      * @param string $field
      * @return array
@@ -80,12 +81,15 @@ class ListResponse extends Response
                 $columns[] = $columns;
             }
         }
+
         return $columns;
     }
 
     protected function parse()
     {
-        if ($this->sources !== null) return;
+        if ($this->sources !== null) {
+            return;
+        }
 
         $this->sources = $this->ids = [];
         foreach (($this->content['hits']['hits'] ?? []) as &$hit) {

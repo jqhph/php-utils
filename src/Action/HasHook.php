@@ -13,7 +13,7 @@ trait HasHook
     ];
 
     /**
-     * 执行中
+     * 执行中.
      *
      * @param callable|string $handler
      * @return void
@@ -24,7 +24,7 @@ trait HasHook
     }
 
     /**
-     * 执行完毕
+     * 执行完毕.
      *
      * @param callable|string $handler
      * @return void
@@ -35,7 +35,7 @@ trait HasHook
     }
 
     /**
-     * 触发执行中钩子
+     * 触发执行中钩子.
      *
      * @param array $input
      */
@@ -45,7 +45,7 @@ trait HasHook
     }
 
     /**
-     * 触发执行完毕钩子
+     * 触发执行完毕钩子.
      *
      * @param array $input 用户输入参数
      * @param mixed $result 动作执行结果
@@ -56,7 +56,7 @@ trait HasHook
     }
 
     /**
-     * 触发钩子
+     * 触发钩子.
      *
      * @param string $key
      * @param mixed ...$params
@@ -94,7 +94,7 @@ trait HasHook
         if (is_string($hook)) {
             $hook = explode('@', $hook);
 
-            $class  = $hook[0];
+            $class = $hook[0];
             $method = ($hook[1] ?? '') ?: 'handle';
 
             if (! class_exists($class)) {

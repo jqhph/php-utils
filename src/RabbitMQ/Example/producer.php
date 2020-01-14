@@ -18,7 +18,7 @@ $connection = Factory::createConnection([
     'read_write_timeout' => 10.0,
     'context' => null,
     'keepalive' => true,
-    'heartbeat' => 2
+    'heartbeat' => 2,
 ]);
 
 $channel = Factory::channel($connection);
@@ -31,12 +31,12 @@ $topic = Factory::producer($channel)->topic($exchange, 'def1');
 
 // ack回调
 $topic->ack(function (AMQPMessage $message) {
-    $this->line("ack: ".$message->body);
+    $this->line('ack: '.$message->body);
 });
 
 // neck回调
 $topic->neck(function (AMQPMessage $message) {
-    $this->line("neck: ".$message->body);
+    $this->line('neck: '.$message->body);
 });
 
 // 入队列失败回调
@@ -47,9 +47,9 @@ $topic->failed(function ($code, $text, $exchange, $routingKey, AMQPMessage $mess
 // 发布消息
 $topic->publish([
     new AMQPMessage('HELLO 1'),
-//            new AMQPMessage('HELLO 2'),
-//            new AMQPMessage('HELLO 3'),
-//            new AMQPMessage('HELLO 4'),
+    //            new AMQPMessage('HELLO 2'),
+    //            new AMQPMessage('HELLO 3'),
+    //            new AMQPMessage('HELLO 4'),
 ]);
 
 Factory::shutdown();

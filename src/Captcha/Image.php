@@ -23,8 +23,8 @@ class Image
 
     public function __construct(string $key, InterventionImage $image, int $quality = 90)
     {
-        $this->key     = $key;
-        $this->image   = $image;
+        $this->key = $key;
+        $this->image = $image;
         $this->quality = $quality;
     }
 
