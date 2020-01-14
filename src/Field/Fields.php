@@ -218,7 +218,7 @@ class Fields
     }
 
     /**
-     * 字段重命名
+     * 字段重命名.
      *
      * @param array $row
      *
