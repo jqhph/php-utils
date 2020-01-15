@@ -19,13 +19,13 @@ class Fields
      * @var array
      */
     protected static $map = [
-        'formatter' => [
+        'formatters' => [
             'stringFields' => 'formatStringField',
             'floatFields'  => 'formatFloadField',
             'intFields'    => 'formatIntField',
             'arrayFields'  => 'formatArrayField',
         ],
-        'setter' => [
+        'setters' => [
             'allow'    => 'allowedFields',
             'deny'     => 'denyFields',
             'string'   => 'stringFields',
@@ -225,11 +225,9 @@ class Fields
             return $newRows;
         }
 
-        $this->setupAllowedFields($row);
-
         $newRow = [];
 
-        foreach ($this->allowedFields as $field) {
+        foreach ($this->getAllowedFields($row) as $field) {
             if ($this->denyFields && in_array($field, $this->denyFields)) {
                 continue;
             }
@@ -248,7 +246,7 @@ class Fields
             // 判断是否允许null类型
             $nullable = $this->nullableFields === true ? true : in_array($field, $this->nullableFields);
 
-            foreach (static::$map['formatter'] as $property => $method) {
+            foreach (static::$map['formatters'] as $property => $method) {
                 // 格式化字段值
                 if (
                     $this->$property
@@ -424,17 +422,15 @@ class Fields
     }
 
     /**
-     * 设置所有允许的字段.
+     * 所有允许的字段.
      *
      * @param array $row
      *
-     * @return void
+     * @return array
      */
-    protected function setupAllowedFields(array &$row)
+    protected function getAllowedFields(array &$row)
     {
-        if (! $this->allowedFields) {
-            $this->allowedFields = array_keys($row);
-        }
+        return $this->allowedFields ?: array_keys($row);
     }
 
     /**
@@ -445,11 +441,15 @@ class Fields
      */
     public function __call($name, $arguments)
     {
-        if (isset(static::$map['setter'][$name])) {
-            $fields = $arguments[0] ?? true;
-            $fields = $fields === true ? true : (array) $fields;
+        if (isset(static::$map['setters'][$name])) {
+            if ($name === 'allow' || $name === 'deny') {
+                $fields = (array) ($arguments[0] ?? []);
+            } else {
+                $fields = $arguments[0] ?? true;
+                $fields = $fields === true ? true : (array) $fields;
+            }
 
-            $this->{static::$map['setter'][$name]} = $fields;
+            $this->{static::$map['setters'][$name]} = $fields;
         } elseif ($name === 'rename') {
             if (is_array($arguments[0])) {
                 $this->renameFields = $arguments[0];
