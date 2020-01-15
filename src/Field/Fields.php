@@ -101,7 +101,12 @@ class Fields
      *
      * @var array
      */
-    protected $defaultSettings = [];
+    protected $defaultValues = [];
+
+    /**
+     * @var \Closure[]
+     */
+    protected $formatedCallbacks = [];
 
     public function __construct(array $allowedFields = [], array $denyFields = [])
     {
@@ -140,33 +145,41 @@ class Fields
     }
 
     /**
-     * 格式化多行.
+     * @param \Closure $closure
      *
-     * @param array $rows
-     *
-     * @return array
+     * @return $this
      */
-    public function formatMany(array $rows)
+    public function formated(\Closure $closure)
     {
-        foreach ($rows as &$v) {
-            $v = $this->format($v);
-        }
+        $this->formatedCallbacks[] = $closure;
 
-        return $rows;
+        return $this;
     }
 
     /**
      * 格式化单行数据.
      *
-     * @param array $row
+     * @param array    $row
+     * @param \Closure $callback
      *
      * @return array
      */
-    public function format(array $row)
+    public function format(array $row, $callback = null)
     {
+        if (! array_is_assoc($row)) {
+            $newRows = [];
+            foreach ($row as &$v) {
+                if (is_array($v)) {
+                    $newRows[] = $this->format($v, $callback);
+                }
+            }
+
+            return $newRows;
+        }
+
         $this->setupAllowedFields($row);
 
-        $result = [];
+        $newRow = [];
 
         foreach ($this->allowedFields as $field) {
             if ($this->denyFields && in_array($field, $this->denyFields)) {
@@ -174,7 +187,7 @@ class Fields
             }
 
             // 获取字段值，如果没有则追加默认值
-            $result[$field] = $this->getValue($row, $field);
+            $newRow[$field] = $this->getValue($row, $field);
 
             // 判断是否允许null类型
             $nullable = $this->nullableFields === true ? true : in_array($field, $this->nullableFields);
@@ -185,53 +198,47 @@ class Fields
                     $this->$property
                     && ($this->$property === true || in_array($field, $this->$property))
                 ) {
-                    $result[$field] = $this->prepareValue(
-                        $field,
-                        $this->$method($result, $field, $nullable),
-                        $result,
-                        $row
-                    );
+                    $newRow[$field] = $this->$method($newRow, $field, $nullable);
+                    $newRow[$field] = $this->formatValue($field, $newRow, $row);
 
                     continue 2;
                 }
             }
 
-            if (is_scalar($result[$field])) {
-                // 默认转化，如果不是string，则不做处理
-                $result[$field] = $this->formatStringField($result, $field, $nullable);
+            if (is_scalar($newRow[$field])) {
+                // 默认转化为string类型，如果不是标量变量，则不做处理
+                $newRow[$field] = $this->formatStringField($newRow, $field, $nullable);
             }
 
             // 默认格式化为字符串类型
-            $result[$field] = $this->prepareValue(
-                $field,
-                $result[$field],
-                $result,
-                $row
-            );
+            $newRow[$field] = $this->formatValue($field, $newRow, $row);
         }
 
-        return $this->replaceKey($result);
+        return $this->formatRow($newRow, $row, $callback);
     }
 
     /**
-     * @param string $field
-     * @param mixed  $value
-     * @param array  $row
-     * @param array  $orginalRow
+     * @param array    $newRow
+     * @param array    $row
+     * @param \Closure $callback
      *
-     * @return mixed
+     * @return array
      */
-    protected function prepareValue($field, $value, array $row, array $orginalRow)
+    protected function formatRow(array &$newRow, array &$row, $callback)
     {
-        if (! isset($this->customFormatters[$field])) {
-            return $value;
+        $newRow = $this->replaceKey($newRow);
+
+        if ($this->formatedCallbacks) {
+            foreach ($this->formatedCallbacks as $f) {
+                $newRow = $f($newRow, $row);
+            }
         }
 
-        foreach ($this->customFormatters[$field] as $callback) {
-            $value = $callback($value, $row, $orginalRow, $field);
+        if ($callback && $callback instanceof \Closure) {
+            return $callback($newRow, $row);
         }
 
-        return $value;
+        return $newRow;
     }
 
     /**
@@ -253,6 +260,26 @@ class Fields
         }
 
         return $row;
+    }
+
+    /**
+     * @param string $field
+     * @param array  $row
+     * @param array  $orginalRow
+     *
+     * @return mixed
+     */
+    protected function formatValue($field, array $row, array $orginalRow)
+    {
+        if (empty($this->customFormatters[$field])) {
+            return $row[$field];
+        }
+
+        foreach ($this->customFormatters[$field] as $callback) {
+            $value = $callback($row[$field], $row, $orginalRow, $field);
+        }
+
+        return $value;
     }
 
     /**
@@ -327,12 +354,11 @@ class Fields
      */
     protected function getValue(array &$row, $field)
     {
-        if (! isset($row[$field]) && isset($this->defaultSettings[$field])) {
-            return $this->defaultSettings[$field];
+        if (! isset($row[$field]) && isset($this->defaultValues[$field])) {
+            return $this->defaultValues[$field];
         }
 
-        // 默认全部转化为string类型
-        return $result[$field] = $row[$field] ?? null;
+        return $row[$field] ?? null;
     }
 
     /**
@@ -370,15 +396,15 @@ class Fields
             }
         } elseif ($name === 'default') {
             if (is_array($arguments[0])) {
-                $this->defaultSettings = $arguments[0];
+                $this->defaultValues = $arguments[0];
             } else {
-                $this->defaultSettings[$arguments[0]] = $arguments[1] ?? null;
+                $this->defaultValues[$arguments[0]] = $arguments[1] ?? null;
             }
         } else {
             if ($arguments[0] instanceof \Closure) {
                 $this->register($name, $arguments[0]);
             } else {
-                $this->defaultSettings[$name] = $arguments[0];
+                $this->defaultValues[$name] = $arguments[0];
             }
         }
 
@@ -395,19 +421,20 @@ class Fields
     {
         return static::make()
             ->$name($arguments[0])
-            ->format($arguments[1]);
+            ->format($arguments[1], $arguments[2] ?? null);
     }
 
     /**
      * 格式化并返回一个新数组.
      *
-     * @param array $row
+     * @param array    $row 单行或多行数组
+     * @param \Closure $callback
      *
      * @return array
      */
-    public static function transform(array $row)
+    public static function transform(array $row, \Closure $callback = null)
     {
-        return static::make()->format($row);
+        return static::make()->format($row, $callback);
     }
 
     /**

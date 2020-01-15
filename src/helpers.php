@@ -82,3 +82,21 @@ if (! function_exists('str_snake')) {
         return $snakeCache[$key][$delimiter] = $value;
     }
 }
+
+if (! function_exists('array_is_assoc')) {
+    /**
+     * Determines if an array is associative.
+     *
+     * An array is "associative" if it doesn't have sequential numerical keys beginning with zero.
+     *
+     * @param  array  $array
+     *
+     * @return bool
+     */
+    function array_is_assoc(array $array)
+    {
+        $keys = array_keys($array);
+
+        return array_keys($keys) !== $keys;
+    }
+}
