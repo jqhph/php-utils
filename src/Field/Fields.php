@@ -131,14 +131,14 @@ class Fields
     }
 
     /**
-     * 注册自定义字段格式化回调方法.
+     * 格式化单个字段.
      *
      * @param string|array $field
      * @param \Closure $callback
      *
      * @return $this
      */
-    public function register($field, \Closure $callback)
+    public function formatField($field, \Closure $callback)
     {
         foreach ((array) $field as $f) {
             if (! isset($this->customFormatters[$f])) {
@@ -253,7 +253,7 @@ class Fields
                     && ($this->$property === true || in_array($field, $this->$property))
                 ) {
                     $newRow[$field] = $this->$method($newRow, $field, $nullable);
-                    $newRow[$field] = $this->formatValue($field, $newRow, $row);
+                    $newRow[$field] = $this->prepareValue($field, $newRow, $row);
 
                     continue 2;
                 }
@@ -265,10 +265,10 @@ class Fields
             }
 
             // 默认格式化为字符串类型
-            $newRow[$field] = $this->formatValue($field, $newRow, $row);
+            $newRow[$field] = $this->prepareValue($field, $newRow, $row);
         }
 
-        return $this->formatRow($newRow, $row);
+        return $this->callFormated($newRow, $row);
     }
 
     /**
@@ -277,7 +277,7 @@ class Fields
      *
      * @return array
      */
-    protected function formatRow(array &$newRow, array &$row)
+    protected function callFormated(array &$newRow, array &$row)
     {
         $newRow = $this->replaceKey($newRow);
 
@@ -318,7 +318,7 @@ class Fields
      *
      * @return mixed
      */
-    protected function formatValue($field, array $row, array $orginalRow)
+    protected function prepareValue($field, array $row, array $orginalRow)
     {
         if (empty($this->customFormatters[$field])) {
             return $row[$field];
@@ -464,7 +464,7 @@ class Fields
             }
         } else {
             if ($arguments[0] instanceof \Closure) {
-                $this->register($name, $arguments[0]);
+                $this->formatField($name, $arguments[0]);
             } else {
                 $this->defaultValues[$name] = $arguments[0];
             }
