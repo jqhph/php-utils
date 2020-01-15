@@ -121,6 +121,10 @@ abstract class Action implements ActionInterface
      */
     final public function execute(array $input = [])
     {
+        if (method_exists($this, 'init')) {
+            $this->init($input);
+        }
+
         $excutor = new Executor($this, $input);
 
         return $excutor->handle(function (array $input) {

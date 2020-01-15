@@ -28,6 +28,7 @@ class Fields
         'setter' => [
             'allow'    => 'allowedFields',
             'deny'     => 'denyFields',
+            'string'   => 'stringFields',
             'nullable' => 'nullableFields',
             'integer'  => 'intFields',
             'float'    => 'floatFields',
@@ -108,6 +109,12 @@ class Fields
      */
     protected $formatedCallbacks = [];
 
+    /**
+     * Fields constructor.
+     *
+     * @param array $allowedFields
+     * @param array $denyFields
+     */
     public function __construct(array $allowedFields = [], array $denyFields = [])
     {
         $this->allow($allowedFields);
@@ -145,6 +152,47 @@ class Fields
     }
 
     /**
+     * 追加的字段，如果字段已存在，则忽略
+     *
+     * @param string|array $key
+     * @param null $value
+     *
+     * @return $this
+     */
+    public function add($key, $value = null)
+    {
+        return $this->formated(function ($row) use ($key, $value) {
+            if (is_array($key)) {
+                foreach ($key as $k => $v) {
+                    if (! array_key_exists($k, $row)) {
+                        $row[$k] = $v;
+                    }
+                }
+
+                return $row;
+            }
+
+            $row[$key] = $value;
+
+            return $this;
+        });
+    }
+
+    /**
+     * 合并字段
+     *
+     * @param array $values
+     *
+     * @return $this
+     */
+    public function merge(array $values)
+    {
+        return $this->formated(function ($row) use ($values) {
+            return array_merge($row, $values);
+        });
+    }
+
+    /**
      * @param \Closure $closure
      *
      * @return $this
@@ -159,18 +207,18 @@ class Fields
     /**
      * 格式化单行数据.
      *
-     * @param array    $row
-     * @param \Closure $callback
+     * @param array $row
+     * @param bool  $addAllAllowedFields
      *
      * @return array
      */
-    public function format(array $row, $callback = null)
+    public function format(array $row, bool $addAllAllowedFields = false)
     {
         if (! array_is_assoc($row)) {
             $newRows = [];
             foreach ($row as &$v) {
                 if (is_array($v)) {
-                    $newRows[] = $this->format($v, $callback);
+                    $newRows[] = $this->format($v, $addAllAllowedFields);
                 }
             }
 
@@ -186,8 +234,17 @@ class Fields
                 continue;
             }
 
-            // 获取字段值，如果没有则追加默认值
-            $newRow[$field] = $this->getValue($row, $field);
+            // 获取字段值，如果没有则取默认值
+            $value = $this->getValue($row, $field);
+
+            if (
+                $addAllAllowedFields === false
+                && ($value === null && ! array_key_exists($field, $row))
+            ) {
+                continue;
+            }
+
+            $newRow[$field] = $value;
 
             // 判断是否允许null类型
             $nullable = $this->nullableFields === true ? true : in_array($field, $this->nullableFields);
@@ -205,7 +262,7 @@ class Fields
                 }
             }
 
-            if (is_scalar($newRow[$field])) {
+            if (is_null($newRow[$field]) || is_scalar($newRow[$field])) {
                 // 默认转化为string类型，如果不是标量变量，则不做处理
                 $newRow[$field] = $this->formatStringField($newRow, $field, $nullable);
             }
@@ -214,17 +271,16 @@ class Fields
             $newRow[$field] = $this->formatValue($field, $newRow, $row);
         }
 
-        return $this->formatRow($newRow, $row, $callback);
+        return $this->formatRow($newRow, $row);
     }
 
     /**
      * @param array    $newRow
      * @param array    $row
-     * @param \Closure $callback
      *
      * @return array
      */
-    protected function formatRow(array &$newRow, array &$row, $callback)
+    protected function formatRow(array &$newRow, array &$row)
     {
         $newRow = $this->replaceKey($newRow);
 
@@ -232,10 +288,6 @@ class Fields
             foreach ($this->formatedCallbacks as $f) {
                 $newRow = $f($newRow, $row);
             }
-        }
-
-        if ($callback && $callback instanceof \Closure) {
-            return $callback($newRow, $row);
         }
 
         return $newRow;
@@ -251,7 +303,7 @@ class Fields
     protected function replaceKey(array $row)
     {
         foreach ($this->renameFields as $field => $newField) {
-            if (! isset($row[$field])) {
+            if (! array_key_exists($field, $row)) {
                 continue;
             }
 
@@ -421,20 +473,20 @@ class Fields
     {
         return static::make()
             ->$name($arguments[0])
-            ->format($arguments[1], $arguments[2] ?? null);
+            ->format($arguments[1], (bool) ($arguments[2] ?? false));
     }
 
     /**
      * 格式化并返回一个新数组.
      *
-     * @param array    $row 单行或多行数组
-     * @param \Closure $callback
+     * @param array $row 单行或多行数组
+     * @param bool  $addAllAllowedFields
      *
      * @return array
      */
-    public static function transform(array $row, \Closure $callback = null)
+    public static function transform(array $row, bool $addAllAllowedFields = false)
     {
-        return static::make()->format($row, $callback);
+        return static::make()->format($row, $addAllAllowedFields);
     }
 
     /**
