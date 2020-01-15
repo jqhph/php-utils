@@ -6,6 +6,7 @@ namespace Dcat\Utils\Field;
  * @method $this allow($fields) 设置允许的字段
  * @method $this deny($fields) 设置要排除的字段
  * @method $this nullable($fields = true) 设置允许为 null 值的字段
+ * @method $this string($fields = true) 设置字符串类型字段
  * @method $this integer($fields = true) 设置整型字段
  * @method $this float($fields = true) 设置浮点型字段
  * @method $this array($fields = true) 设置数组类型字段
@@ -19,9 +20,10 @@ class Fields
      */
     protected static $map = [
         'formatter' => [
-            'floatFields' => 'formatFloadField',
-            'intFields'   => 'formatIntField',
-            'arrayFields' => 'formatArrayField',
+            'stringFields' => 'formatStringField',
+            'floatFields'  => 'formatFloadField',
+            'intFields'    => 'formatIntField',
+            'arrayFields'  => 'formatArrayField',
         ],
         'setter' => [
             'allow'    => 'allowedFields',
@@ -60,6 +62,13 @@ class Fields
      * @var array|true
      */
     protected $nullableFields = [];
+
+    /**
+     * 当值为true时则所有字段都将转化为 string.
+     *
+     * @var array
+     */
+    protected $stringFields = [];
 
     /**
      * 当值为true时则所有字段都将转化为 int.
@@ -187,10 +196,15 @@ class Fields
                 }
             }
 
+            if (is_scalar($result[$field])) {
+                // 默认转化，如果不是string，则不做处理
+                $result[$field] = $this->formatStringField($result, $field, $nullable);
+            }
+
             // 默认格式化为字符串类型
             $result[$field] = $this->prepareValue(
                 $field,
-                $this->formatStringField($result, $field, $nullable),
+                $result[$field],
                 $result,
                 $row
             );
@@ -221,7 +235,7 @@ class Fields
     }
 
     /**
-     * 字段重命名
+     * 字段重命名.
      *
      * @param array $row
      *
