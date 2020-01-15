@@ -234,17 +234,16 @@ class Fields
                 continue;
             }
 
-            // 获取字段值，如果没有则取默认值
-            $value = $this->getValue($row, $field);
-
             if (
                 $addAllAllowedFields === false
-                && ($value === null && ! array_key_exists($field, $row))
+                && ! array_key_exists($field, $row)
+                && ! $this->hasDefaultValue($field)
             ) {
                 continue;
             }
 
-            $newRow[$field] = $value;
+            // 获取字段值，如果没有则取默认值
+            $newRow[$field] = $this->getValue($row, $field);
 
             // 判断是否允许null类型
             $nullable = $this->nullableFields === true ? true : in_array($field, $this->nullableFields);
@@ -399,6 +398,17 @@ class Fields
     }
 
     /**
+     * @param array  $row
+     * @param string $field
+     *
+     * @return bool
+     */
+    public function hasDefaultValue($field)
+    {
+        return array_key_exists($field, $this->defaultValues);
+    }
+
+    /**
      * @param array $row
      * @param string $field
      *
@@ -406,7 +416,7 @@ class Fields
      */
     protected function getValue(array &$row, $field)
     {
-        if (! isset($row[$field]) && isset($this->defaultValues[$field])) {
+        if (! isset($row[$field]) && $this->hasDefaultValue($field)) {
             return $this->defaultValues[$field];
         }
 
