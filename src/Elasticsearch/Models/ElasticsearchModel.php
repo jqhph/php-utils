@@ -123,7 +123,7 @@ class ElasticsearchModel
      */
     public function getClient()
     {
-        return $this->client ?: BuilderFactory::getClient();
+        return $this->client ?: ($this->client = BuilderFactory::getClient());
     }
 
     /**

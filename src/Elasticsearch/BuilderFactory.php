@@ -2,17 +2,49 @@
 
 namespace Dcat\Utils\Elasticsearch;
 
+use Dcat\Utils\Elasticsearch\Connections\ConnectionFactory;
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
+use Elasticsearch\Serializers\SmartSerializer;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * @require elasticsearch/elasticsearch
  */
 class BuilderFactory
 {
+    /**
+     * @var Client
+     */
     protected static $client;
 
+    /**
+     * @var array
+     */
     public static $hosts = [];
+
+    /**
+     * @var LoggerInterface
+     */
+    public static $logger;
+
+    /**
+     * @var LoggerInterface
+     */
+    public static $tracer;
+
+    /**
+     * @var array
+     */
+    public static $factoryOptions = [
+        'client' => [
+            'headers' => [
+                'Content-Type' => ['application/json'],
+                'Accept' => ['application/json']
+            ],
+        ],
+    ];
 
     /**
      * 创建一个新的Builder实例.
@@ -23,6 +55,16 @@ class BuilderFactory
     public static function create($host = [])
     {
         $builder = ClientBuilder::create();
+
+        $builder->setConnectionFactory(
+            new ConnectionFactory(
+                ClientBuilder::defaultHandler(),
+                static::$factoryOptions,
+                new SmartSerializer(),
+                static::$logger ?: new NullLogger(),
+                static::$tracer ?: new NullLogger()
+            )
+        );
 
         $builder->setHosts(static::parseHosts($host));
 
