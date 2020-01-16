@@ -13,6 +13,7 @@ namespace Dcat\Utils\Field;
  * @property array $stringFields 当值为true时则所有字段都将转化为 string
  * @property array $intFields 当值为true时则所有字段都将转化为 int
  * @property array $floatFields 当值为true时则所有字段都将转化为 float
+ * @property array $booleanFields 当值为true时则所有字段都将转化为 bool
  * @property array $arrayFields 当值为true时则所有字段都将转化为 array
  * @property array $newNameFields 需要重新命名key的字段
  * @property array $defaultValues 字段默认值
@@ -42,6 +43,7 @@ trait HasFields
             'nullableFields' => 'nullable',
             'intFields'      => 'integer',
             'floatFields'    => 'float',
+            'booleanFields'  => 'boolean',
             'arrayFields'    => 'array',
             'newNameFields'  => 'rename',
             'defaultValues'  => 'default',
