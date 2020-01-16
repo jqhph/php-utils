@@ -3,8 +3,7 @@
 namespace Dcat\Utils\Field;
 
 /**
- * Trait HasFields
- * @package Dcat\Utils\Field
+ * Trait HasFields.
  *
  * @property string $fieldsClass 类名
  *
@@ -31,7 +30,7 @@ trait HasFields
     protected $formatter;
 
     /**
-     * 初始化
+     * 初始化.
      *
      * @param Fields $fields
      */
@@ -74,7 +73,7 @@ trait HasFields
     }
 
     /**
-     * 转化数组每个元素的数据类型
+     * 转化数组每个元素的数据类型.
      *
      * @param array $values
      * @param bool  $addAllAllowedFields

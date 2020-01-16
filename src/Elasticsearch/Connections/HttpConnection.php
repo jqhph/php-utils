@@ -5,7 +5,7 @@ namespace Dcat\Utils\Elasticsearch\Connections;
 class HttpConnection extends \Elasticsearch\Connections\Connection
 {
     /**
-     * Log a successful request
+     * Log a successful request.
      *
      * @param array $request
      * @param array $response
@@ -13,37 +13,37 @@ class HttpConnection extends \Elasticsearch\Connections\Connection
      */
     public function logRequestSuccess(array $request, array $response): void
     {
-        $this->log->debug('Request Body', array($request['body']));
+        $this->log->debug('Request Body', [$request['body']]);
         $this->log->info(
             'Request Success:',
-            array(
+            [
                 'method'    => $request['http_method'],
                 'uri'       => $response['effective_url'],
                 'port'      => $response['transfer_stats']['primary_port'] ?? null,
                 'headers'   => $request['headers'],
                 'HTTP code' => $response['status'],
                 'duration'  => $response['transfer_stats']['total_time'],
-            )
+            ]
         );
-        $this->log->debug('Response', array($response['body']));
+        $this->log->debug('Response', [$response['body']]);
 
         // Build the curl command for Trace.
         $curlCommand = $this->buildCurlCommand($request['http_method'], $response['effective_url'], $request['body']);
         $this->trace->info($curlCommand);
         $this->trace->debug(
             'Response:',
-            array(
+            [
                 'response'  => $response['body'],
                 'method'    => $request['http_method'],
                 'uri'       => $response['effective_url'],
                 'HTTP code' => $response['status'],
                 'duration'  => $response['transfer_stats']['total_time'],
-            )
+            ]
         );
     }
 
     /**
-     * Log a failed request
+     * Log a failed request.
      *
      * @param array $request
      * @param array $response
@@ -53,11 +53,11 @@ class HttpConnection extends \Elasticsearch\Connections\Connection
      */
     public function logRequestFail(array $request, array $response, \Exception $exception): void
     {
-        $this->log->debug('Request Body', array($request['body']));
+        $this->log->debug('Request Body', [$request['body']]);
 
         $this->log->warning(
             'Request Failure:',
-            array(
+            [
                 'method'    => $request['http_method'],
                 'uri'       => $response['effective_url'],
                 'port'      => $response['transfer_stats']['primary_port'] ?? null,
@@ -65,27 +65,27 @@ class HttpConnection extends \Elasticsearch\Connections\Connection
                 'HTTP code' => $response['status'],
                 'duration'  => $response['transfer_stats']['total_time'],
                 'error'     => $exception->getMessage(),
-            )
+            ]
         );
-        $this->log->warning('Response', array($response['body']));
+        $this->log->warning('Response', [$response['body']]);
 
         // Build the curl command for Trace.
         $curlCommand = $this->buildCurlCommand($request['http_method'], $response['effective_url'], $request['body']);
         $this->trace->info($curlCommand);
         $this->trace->debug(
             'Response:',
-            array(
+            [
                 'response'  => $response,
                 'method'    => $request['http_method'],
                 'uri'       => $response['effective_url'],
                 'HTTP code' => $response['status'],
                 'duration'  => $response['transfer_stats']['total_time'],
-            )
+            ]
         );
     }
 
     /**
-     * Construct a string cURL command
+     * Construct a string cURL command.
      */
     protected function buildCurlCommand(string $method, string $uri, ?string $body): string
     {
@@ -95,11 +95,11 @@ class HttpConnection extends \Elasticsearch\Connections\Connection
             str_replace('?', '?pretty=true', $uri);
         }
 
-        $curlCommand = 'curl -X' . strtoupper($method);
-        $curlCommand .= " '" . $uri . "'";
+        $curlCommand = 'curl -X'.strtoupper($method);
+        $curlCommand .= " '".$uri."'";
 
         if (isset($body) === true && $body !== '') {
-            $curlCommand .= " -d '" . $body . "'";
+            $curlCommand .= " -d '".$body."'";
         }
 
         return $curlCommand;

@@ -5,16 +5,16 @@ namespace Dcat\Utils\Elasticsearch\ConnectionPool;
 use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
 use Elasticsearch\ConnectionPool\AbstractConnectionPool;
 use Elasticsearch\ConnectionPool\ConnectionPoolInterface;
-use Elasticsearch\Connections\ConnectionInterface;
 use Elasticsearch\ConnectionPool\Selectors\SelectorInterface;
 use Elasticsearch\Connections\ConnectionFactoryInterface;
+use Elasticsearch\Connections\ConnectionInterface;
 
 class StaticNoPingConnectionPool extends AbstractConnectionPool implements ConnectionPoolInterface
 {
     /**
      * @var int
      */
-    private $pingTimeout    = 60;
+    private $pingTimeout = 60;
 
     /**
      * @var int
@@ -50,7 +50,7 @@ class StaticNoPingConnectionPool extends AbstractConnectionPool implements Conne
             }
         }
 
-        throw new NoNodesAvailableException("No alive nodes found in your cluster");
+        throw new NoNodesAvailableException('No alive nodes found in your cluster');
     }
 
     public function scheduleCheck(): void

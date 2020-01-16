@@ -131,7 +131,7 @@ class Fields
     }
 
     /**
-     * 追加的字段，如果字段已存在，则忽略
+     * 追加的字段，如果字段已存在，则忽略.
      *
      * @param string|array $key
      * @param null $value
@@ -158,7 +158,7 @@ class Fields
     }
 
     /**
-     * 合并字段
+     * 合并字段.
      *
      * @param array $values
      *
