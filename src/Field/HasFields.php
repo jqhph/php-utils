@@ -15,7 +15,7 @@ namespace Dcat\Utils\Field;
  * @property array $intFields 当值为true时则所有字段都将转化为 int
  * @property array $floatFields 当值为true时则所有字段都将转化为 float
  * @property array $arrayFields 当值为true时则所有字段都将转化为 array
- * @property array $renameFields 需要重新命名key的字段
+ * @property array $newNameFields 需要重新命名key的字段
  * @property array $defaultValues 字段默认值
  */
 trait HasFields
@@ -37,26 +37,26 @@ trait HasFields
      */
     protected function initFields(Fields $fields)
     {
-        $properties = [
+        $map = [
             'allowedFields'  => 'allow',
             'denyFields'     => 'deny',
             'nullableFields' => 'nullable',
             'intFields'      => 'integer',
             'floatFields'    => 'float',
             'arrayFields'    => 'array',
-            'renameFields'   => 'rename',
+            'newNameFields'  => 'rename',
             'defaultValues'  => 'default',
         ];
 
-        foreach ($properties as $property => $method) {
+        foreach ($map as $property => $method) {
             if (! empty($this->$property)) {
                 $fields->$method($this->$property);
             }
         }
 
         $fields->formated(function ($newRow, $row) {
-            if ($this->formatter) {
-                return ($this->formatter)($newRow, $row);
+            if ($f = $this->formatter) {
+                return $f($newRow, $row);
             }
 
             return $newRow;

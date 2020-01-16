@@ -37,13 +37,6 @@ class Fields
     ];
 
     /**
-     * 自定义格式化回调.
-     *
-     * @var array
-     */
-    protected $customFormatters = [];
-
-    /**
      * 允许的字段.
      *
      * @var array
@@ -95,7 +88,7 @@ class Fields
     /**
      * @var array
      */
-    protected $renameFields = [];
+    protected $newNameFields = [];
 
     /**
      * 默认值设置.
@@ -105,30 +98,16 @@ class Fields
     protected $defaultValues = [];
 
     /**
+     * 自定义格式化回调.
+     *
+     * @var \Closure[]
+     */
+    protected $fieldFormatters = [];
+
+    /**
      * @var \Closure[]
      */
     protected $formatedCallbacks = [];
-
-    /**
-     * Fields constructor.
-     *
-     * @param array $allowedFields
-     * @param array $denyFields
-     */
-    public function __construct(array $allowedFields = [], array $denyFields = [])
-    {
-        $this->allow($allowedFields);
-        $this->deny($denyFields);
-
-        $this->init();
-    }
-
-    /**
-     * 初始化自定义字段格式化功能.
-     */
-    protected function init()
-    {
-    }
 
     /**
      * 格式化单个字段.
@@ -141,11 +120,11 @@ class Fields
     public function formatField($field, \Closure $callback)
     {
         foreach ((array) $field as $f) {
-            if (! isset($this->customFormatters[$f])) {
-                $this->customFormatters[$f] = [];
+            if (! isset($this->fieldFormatters[$f])) {
+                $this->fieldFormatters[$f] = [];
             }
 
-            $this->customFormatters[$f][] = $callback;
+            $this->fieldFormatters[$f][] = $callback;
         }
 
         return $this;
@@ -299,7 +278,7 @@ class Fields
      */
     protected function replaceKey(array $row)
     {
-        foreach ($this->renameFields as $field => $newField) {
+        foreach ($this->newNameFields as $field => $newField) {
             if (! array_key_exists($field, $row)) {
                 continue;
             }
@@ -320,11 +299,11 @@ class Fields
      */
     protected function prepareValue($field, array $row, array $orginalRow)
     {
-        if (empty($this->customFormatters[$field])) {
+        if (empty($this->fieldFormatters[$field])) {
             return $row[$field];
         }
 
-        foreach ($this->customFormatters[$field] as $callback) {
+        foreach ($this->fieldFormatters[$field] as $callback) {
             $value = $callback($row[$field], $row, $orginalRow, $field);
         }
 
@@ -452,9 +431,9 @@ class Fields
             $this->{static::$map['setters'][$name]} = $fields;
         } elseif ($name === 'rename') {
             if (is_array($arguments[0])) {
-                $this->renameFields = $arguments[0];
+                $this->newNameFields = $arguments[0];
             } else {
-                $this->renameFields[$arguments[0]] = $arguments[1] ?? null;
+                $this->newNameFields[$arguments[0]] = $arguments[1] ?? null;
             }
         } elseif ($name === 'default') {
             if (is_array($arguments[0])) {
