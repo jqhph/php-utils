@@ -2,38 +2,36 @@
 
 namespace Dcat\Utils\Elasticsearch\Connections;
 
-use Elasticsearch\Connections\ConnectionInterface;
 use Elasticsearch\Connections\ConnectionFactoryInterface;
+use Elasticsearch\Connections\ConnectionInterface;
 use Elasticsearch\Serializers\SerializerInterface;
 use Psr\Log\LoggerInterface;
 
-
 /**
- * Class AbstractConnection
+ * Class AbstractConnection.
  *
  * @category Elasticsearch
- * @package  Elasticsearch\Connections
  * @author   jqh
  */
 class ConnectionFactory implements ConnectionFactoryInterface
 {
-    /** @var  array */
+    /** @var array */
     private $connectionParams;
 
-    /** @var  SerializerInterface */
+    /** @var SerializerInterface */
     private $serializer;
 
-    /** @var  LoggerInterface */
+    /** @var LoggerInterface */
     private $logger;
 
-    /** @var  LoggerInterface */
+    /** @var LoggerInterface */
     private $tracer;
 
     /** @var callable */
     private $handler;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param callable            $handler
      * @param array               $connectionParams
@@ -43,12 +41,13 @@ class ConnectionFactory implements ConnectionFactoryInterface
      */
     public function __construct(callable $handler, array $connectionParams, SerializerInterface $serializer, LoggerInterface $logger, LoggerInterface $tracer)
     {
-        $this->handler          = $handler;
+        $this->handler = $handler;
         $this->connectionParams = $connectionParams;
-        $this->logger           = $logger;
-        $this->tracer           = $tracer;
-        $this->serializer       = $serializer;
+        $this->logger = $logger;
+        $this->tracer = $tracer;
+        $this->serializer = $serializer;
     }
+
     /**
      * @param $hostDetails
      *
@@ -65,5 +64,4 @@ class ConnectionFactory implements ConnectionFactoryInterface
             $this->tracer
         );
     }
-
 }
