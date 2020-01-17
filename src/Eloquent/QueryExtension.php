@@ -12,7 +12,7 @@ class QueryExtension
     /**
      * Mysql 保存或新增功能
      */
-    public static function storeOrUpdate()
+    public static function insertOrReplace()
     {
         $makeInsertOrUpdateSuffix = function ($grammar, array &$values) {
             /* @var Grammar $grammar */
@@ -29,10 +29,10 @@ class QueryExtension
             return $sql.join(', ', $suffix);
         };
 
-        Eloquent\Builder::macro('storeOrUpdate', function ($values) {
-            return $this->query->storeOrUpdate($values);
+        Eloquent\Builder::macro('insertOrReplace', function ($values) {
+            return $this->query->insertOrReplace($values);
         });
-        Query\Builder::macro('storeOrUpdate', function (array $values) use ($makeInsertOrUpdateSuffix) {
+        Query\Builder::macro('insertOrReplace', function (array $values) use ($makeInsertOrUpdateSuffix) {
             if (empty($values)) {
                 return true;
             }

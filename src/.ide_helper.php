@@ -29,7 +29,7 @@ namespace Illuminate\Support
 namespace Illuminate\Database\Query
 {
     /**
-     * @method mixed storeOrUpdate(array $values)
+     * @method mixed insertOrReplace(array $values)
      */
     class Builder
     {
