@@ -1,29 +1,29 @@
 <?php
 
-namespace Dcat\Utils\Field;
+namespace Dcat\Utils\Cast;
 
 /**
- * Trait HasFields.
+ * Trait HasCaster.
  *
- * @property string $fieldsClass 类名
+ * @property string $casterClass 类名
  *
  * @property array $allowedFields 允许的字段
  * @property array $denyFields 拒绝的字段
  * @property array $nullableFields 当值为true时则所有字段都允许为 null
- * @property array $stringFields 当值为true时则所有字段都将转化为 string
- * @property array $intFields 当值为true时则所有字段都将转化为 int
- * @property array $floatFields 当值为true时则所有字段都将转化为 float
- * @property array $booleanFields 当值为true时则所有字段都将转化为 bool
- * @property array $arrayFields 当值为true时则所有字段都将转化为 array
+ * @property array $stringFields
+ * @property array $intFields
+ * @property array $floatFields
+ * @property array $booleanFields
+ * @property array $arrayFields
  * @property array $newNameFields 需要重新命名key的字段
  * @property array $defaultValues 字段默认值
  */
-trait HasFields
+trait HasCaster
 {
     /**
-     * @var Fields
+     * @var Caster
      */
-    protected $__fields;
+    protected $caster;
 
     /**
      * @var \Closure
@@ -33,9 +33,9 @@ trait HasFields
     /**
      * 初始化.
      *
-     * @param Fields $fields
+     * @param Caster $caster
      */
-    protected function initFields(Fields $fields)
+    protected function initCaster(Caster $caster)
     {
         $map = [
             'allowedFields'  => 'allow',
@@ -51,11 +51,11 @@ trait HasFields
 
         foreach ($map as $property => $method) {
             if (! empty($this->$property)) {
-                $fields->$method($this->$property);
+                $caster->$method($this->$property);
             }
         }
 
-        $fields->formated(function ($newRow, $row) {
+        $caster->casted(function ($newRow, $row) {
             if ($f = $this->formatter) {
                 return $f($newRow, $row);
             }
@@ -69,7 +69,7 @@ trait HasFields
      *
      * @return void
      */
-    public function formatter(\Closure $closure)
+    public function formatAttributes(\Closure $closure)
     {
         $this->formatter = $closure;
     }
@@ -82,30 +82,30 @@ trait HasFields
      *
      * @return array
      */
-    public function transformValues(array $values, bool $addAllAllowedFields = false)
+    public function castAttributes(array $values, bool $addAllAllowedFields = false)
     {
-        return $this->fields()->format($values, $addAllAllowedFields);
+        return $this->caster()->cast($values, $addAllAllowedFields);
     }
 
     /**
-     * @return Fields
+     * @return Caster
      */
-    public function fields()
+    public function caster()
     {
-        return $this->__fields ?: ($this->__fields = $this->newFields());
+        return $this->caster ?: ($this->caster = $this->newCaster());
     }
 
     /**
-     * @return Fields
+     * @return Caster
      */
-    protected function newFields()
+    public function newCaster()
     {
-        $class = empty($this->fieldsClass) ? Fields::class : $this->fieldsClass;
+        $class = empty($this->casterClass) ? Caster::class : $this->casterClass;
 
-        $fields = new $class();
+        $caster = new $class();
 
-        $this->initFields($fields);
+        $this->initCaster($caster);
 
-        return $fields;
+        return $caster;
     }
 }

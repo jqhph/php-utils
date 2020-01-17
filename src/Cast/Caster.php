@@ -1,34 +1,39 @@
 <?php
 
-namespace Dcat\Utils\Field;
+namespace Dcat\Utils\Cast;
 
 /**
  * @method $this allow($fields) 设置允许的字段
  * @method $this deny($fields) 设置要排除的字段
  * @method $this nullable($fields = true) 设置允许为 null 值的字段
- * @method $this string($fields = true) 设置字符串类型字段
- * @method $this integer($fields = true) 设置整型字段
- * @method $this float($fields = true) 设置浮点型字段
- * @method $this boolean($fields = true) 设置布尔型字段
- * @method $this array($fields = true) 设置数组类型字段
+ * @method $this string($fields) 设置字符串类型字段
+ * @method $this integer($fields) 设置整型字段
+ * @method $this float($fields) 设置浮点型字段
+ * @method $this boolean($fields) 设置布尔型字段
+ * @method $this array($fields) 设置数组类型字段
  * @method $this rename($key, $newKey = null) 字段重命名
  * @method $this default($key, $value = null) 设置字段默认值
  */
-class Fields
+class Caster
 {
+    const TYPE_INT = 'integer';
+    const TYPE_STRING = 'string';
+    const TYPE_BOOL = 'boolean';
+    const TYPE_FLOAT = 'float';
+    const TYPE_ARRAY = 'array';
+
     /**
      * @var array
      */
-    protected static $map = [
-        'formatters' => [
-            'stringFields'  => 'formatStringField',
-            'floatFields'   => 'formatFloadField',
-            'intFields'     => 'formatIntField',
-            'booleanFields' => 'formatBoolField',
-            'arrayFields'   => 'formatArrayField',
+    protected static $definitions = [
+        'casts' => [
+            'stringFields'  => 'castValueAsString',
+            'floatFields'   => 'castValueAsFloat',
+            'intFields'     => 'castValueAsInt',
+            'booleanFields' => 'castValueAsBool',
+            'arrayFields'   => 'castValueAsArray',
         ],
         'setters' => [
-            'allow'    => 'allowedFields',
             'deny'     => 'denyFields',
             'string'   => 'stringFields',
             'nullable' => 'nullableFields',
@@ -37,12 +42,19 @@ class Fields
             'boolean'  => 'booleanFields',
             'array'    => 'arrayFields',
         ],
+        'types' => [
+            self::TYPE_INT,
+            self::TYPE_STRING,
+            self::TYPE_BOOL,
+            self::TYPE_FLOAT,
+            self::TYPE_ARRAY,
+        ],
     ];
 
     /**
      * @var \Closure[]
      */
-    protected static $customFormatters = [];
+    protected static $customCallbacks = [];
 
     /**
      * 允许的字段.
@@ -66,36 +78,26 @@ class Fields
     protected $nullableFields = [];
 
     /**
-     * 当值为true时则所有字段都将转化为 string.
-     *
      * @var array
      */
     protected $stringFields = [];
 
     /**
-     * 当值为true时则所有字段都将转化为 int.
-     *
      * @var array|true
      */
     protected $intFields = [];
 
     /**
-     * 当值为true时则所有字段都将转化为 float.
-     *
      * @var array|true
      */
     protected $floatFields = [];
 
     /**
-     * 当值为true时则所有字段都将转化为 bool.
-     *
      * @var array|true
      */
     protected $booleanFields = [];
 
     /**
-     * 当值为true时则所有字段都将转化为 array.
-     *
      * @var array|true
      */
     protected $arrayFields = [];
@@ -117,12 +119,12 @@ class Fields
      *
      * @var \Closure[]
      */
-    protected $fieldFormatters = [];
+    protected $fieldCallbacks = [];
 
     /**
      * @var \Closure[]
      */
-    protected $formatedCallbacks = [];
+    protected $castedCallbacks = [];
 
     /**
      * @var array
@@ -130,21 +132,65 @@ class Fields
     protected $customValues = [];
 
     /**
-     * 格式化单个字段.
+     * 设置允许的字段
+     *
+     * @param string|array $fields
+     *
+     * @return $this
+     */
+    public function fields($fields)
+    {
+        $fields = (array) $fields;
+
+        if (! array_has_string_key($fields)) {
+            $this->allowedFields = $fields;
+
+            return $this;
+        }
+
+        foreach ($fields as $field => $type) {
+            if (is_int($field)) {
+                $field = $type;
+                $type = null;
+            }
+
+            $this->allowedFields[] = $field;
+
+            if (isset(static::$customCallbacks[$type])) {
+                $this->setCustomValue($type, $field);
+
+                continue;
+            }
+
+            if ($type && in_array($type, static::$definitions['types'])) {
+                $p = static::$definitions['setters'][$type];
+                if (! is_array($this->$p)) {
+                    $this->$p = [];
+                }
+
+                $this->{$p}[] = $field;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * 转化单个字段.
      *
      * @param string|array $field
      * @param \Closure $callback
      *
      * @return $this
      */
-    public function formatField($field, \Closure $callback)
+    public function castField($field, \Closure $callback)
     {
         foreach ((array) $field as $f) {
-            if (! isset($this->fieldFormatters[$f])) {
-                $this->fieldFormatters[$f] = [];
+            if (! isset($this->fieldCallbacks[$f])) {
+                $this->fieldCallbacks[$f] = [];
             }
 
-            $this->fieldFormatters[$f][] = $callback;
+            $this->fieldCallbacks[$f][] = $callback;
         }
 
         return $this;
@@ -160,7 +206,7 @@ class Fields
      */
     public function add($key, $value = null)
     {
-        return $this->formated(function ($row) use ($key, $value) {
+        return $this->casted(function ($row) use ($key, $value) {
             if (is_array($key)) {
                 foreach ($key as $k => $v) {
                     if (! array_key_exists($k, $row)) {
@@ -186,7 +232,7 @@ class Fields
      */
     public function merge(array $values)
     {
-        return $this->formated(function ($row) use ($values) {
+        return $this->casted(function ($row) use ($values) {
             return array_merge($row, $values);
         });
     }
@@ -196,9 +242,9 @@ class Fields
      *
      * @return $this
      */
-    public function formated(\Closure $closure)
+    public function casted(\Closure $closure)
     {
-        $this->formatedCallbacks[] = $closure;
+        $this->castedCallbacks[] = $closure;
 
         return $this;
     }
@@ -211,13 +257,13 @@ class Fields
      *
      * @return array
      */
-    public function format(array $row, bool $addAllAllowedFields = false)
+    public function cast(array $row, bool $addAllAllowedFields = false)
     {
         if (! array_has_string_key($row)) {
             $newRows = [];
             foreach ($row as &$v) {
                 if (is_array($v)) {
-                    $newRows[] = $this->format($v, $addAllAllowedFields);
+                    $newRows[] = $this->cast($v, $addAllAllowedFields);
                 }
             }
 
@@ -245,56 +291,56 @@ class Fields
             // 判断是否允许null类型
             $nullable = $this->nullableFields === true ? true : in_array($field, $this->nullableFields);
 
-            $value = $this->applyFormatters($field, $newRow, $nullable, $formated);
-            if ($formated) {
+            $value = $this->castValue($field, $newRow, $nullable, $casted);
+            if ($casted) {
                 $newRow[$field] = $value;
-                $newRow[$field] = $this->applyFieldFormatters($field, $newRow, $row);
+                $newRow[$field] = $this->applyFieldCallbacks($field, $newRow, $row);
 
                 continue;
             }
 
             if (is_null($newRow[$field]) || is_scalar($newRow[$field])) {
                 // 默认转化为string类型，如果不是标量变量，则不做处理
-                $newRow[$field] = Formatter::formatStringField($newRow, $field, $nullable);
+                $newRow[$field] = static::castValueAsString($newRow, $field, $nullable);
             }
 
             // 默认格式化为字符串类型
-            $newRow[$field] = $this->applyFieldFormatters($field, $newRow, $row);
+            $newRow[$field] = $this->applyFieldCallbacks($field, $newRow, $row);
         }
 
-        return $this->applyFormatedCallbacks($newRow, $row);
+        return $this->applyCastedCallbacks($newRow, $row);
     }
 
     /**
      * @param string $field
      * @param array  $newRow
      * @param bool   $nullable
-     * @param mixed  $formated
+     * @param mixed  $casted
      *
      * @return mixed|void
      */
-    protected function applyFormatters(string $field, array &$newRow, bool $nullable, &$formated)
+    protected function castValue(string $field, array &$newRow, bool $nullable, &$casted)
     {
         if ($this->customValues) {
-            foreach (static::$customFormatters as $method => $callback) {
+            foreach (static::$customCallbacks as $method => $callback) {
                 if ($this->isField($this->customValues[$method] ?? null, $field)) {
-                    $formated = true;
+                    $casted = true;
 
                     return $callback($newRow, $field, $nullable);
                 }
             }
         }
 
-        foreach (static::$map['formatters'] as $property => $method) {
+        foreach (static::$definitions['casts'] as $property => $method) {
             // 格式化字段值
             if ($this->isField($this->$property, $field)) {
-                $formated = true;
+                $casted = true;
 
-                return Formatter::$method($newRow, $field, $nullable);
+                return static::$method($newRow, $field, $nullable);
             }
         }
 
-        $formated = false;
+        $casted = false;
     }
 
     /**
@@ -314,12 +360,12 @@ class Fields
      *
      * @return array
      */
-    protected function applyFormatedCallbacks(array &$newRow, array &$row)
+    protected function applyCastedCallbacks(array &$newRow, array &$row)
     {
         $newRow = $this->replaceKey($newRow);
 
-        if ($this->formatedCallbacks) {
-            foreach ($this->formatedCallbacks as $f) {
+        if ($this->castedCallbacks) {
+            foreach ($this->castedCallbacks as $f) {
                 $newRow = $f($newRow, $row);
             }
         }
@@ -355,13 +401,13 @@ class Fields
      *
      * @return mixed
      */
-    protected function applyFieldFormatters($field, array $newRow, array $row)
+    protected function applyFieldCallbacks($field, array $newRow, array $row)
     {
-        if (empty($this->fieldFormatters[$field])) {
+        if (empty($this->fieldCallbacks[$field])) {
             return $newRow[$field];
         }
 
-        foreach ($this->fieldFormatters[$field] as $callback) {
+        foreach ($this->fieldCallbacks[$field] as $callback) {
             $value = $callback($newRow[$field], $newRow, $row, $field);
         }
 
@@ -405,6 +451,20 @@ class Fields
     {
         return $this->allowedFields ?: array_keys($row);
     }
+    /**
+     * @param string       $type
+     * @param string|array $field
+     */
+    protected function setCustomValue($type, $field)
+    {
+        if (! isset($this->customValues[$type])) {
+            $this->customValues[$type] = [];
+        }
+
+        $this->customValues[$type] = array_merge($this->customValues[$type], (array) $field);
+    }
+
+
 
     /**
      * @param string $name
@@ -414,41 +474,126 @@ class Fields
      */
     public function __call($name, $arguments)
     {
-        if (isset(static::$customFormatters[$name])) {
-            $fields = $arguments[0] ?? true;
-            $fields = $fields === true ? true : (array) $fields;
-
-            $this->customValues[$name] = $fields;
-        } elseif (isset(static::$map['setters'][$name])) {
-            if ($name === 'allow' || $name === 'deny') {
+        if (isset(static::$customCallbacks[$name])) {
+            $this->setCustomValue($name, $arguments[0] ?? []);
+        } elseif ($name === 'allow') {
+            $this->fields($arguments[0] ?? []);
+        } elseif (isset(static::$definitions['setters'][$name])) {
+            if ($name === 'deny' || $name === 'nullable') {
                 $fields = (array) ($arguments[0] ?? []);
             } else {
                 $fields = $arguments[0] ?? true;
                 $fields = $fields === true ? true : (array) $fields;
             }
 
-            $this->{static::$map['setters'][$name]} = $fields;
+            $p = static::$definitions['setters'][$name];
+
+            if ($fields === true) {
+                $this->$p = $fields;
+            } else {
+                $this->$p = is_array($this->$p) ? array_merge($this->$p, $fields) : $fields;
+            }
         } elseif ($name === 'rename') {
             if (is_array($arguments[0])) {
-                $this->newNameFields = $arguments[0];
+                $this->newNameFields = array_merge($this->newNameFields, $arguments[0]);
             } else {
                 $this->newNameFields[$arguments[0]] = $arguments[1] ?? null;
             }
         } elseif ($name === 'default') {
             if (is_array($arguments[0])) {
-                $this->defaultValues = $arguments[0];
+                $this->defaultValues = array_merge($this->defaultValues, $arguments[0]);
             } else {
                 $this->defaultValues[$arguments[0]] = $arguments[1] ?? null;
             }
         } else {
             if ($arguments[0] instanceof \Closure) {
-                $this->formatField($name, $arguments[0]);
+                $this->castField($name, $arguments[0]);
             } else {
-                $this->defaultValues[$name] = $arguments[0];
+                throw new \Exception("Call undefined method [$name]!");
             }
         }
 
         return $this;
+    }
+
+    /**
+     * @param array $row
+     * @param $field
+     * @param bool $nullable
+     *
+     * @return string|null
+     */
+    public static function castValueAsString(array $row, string $field, bool $nullable)
+    {
+        if ($nullable) {
+            return isset($row[$field]) ? (string) $row[$field] : null;
+        }
+
+        return (string) $row[$field];
+    }
+
+    /**
+     * @param array $row
+     * @param string $field
+     * @param bool $nullable
+     *
+     * @return array|null
+     */
+    public static function castValueAsArray(array $row, string $field, bool $nullable)
+    {
+        if ($nullable) {
+            return isset($row[$field]) ? (array) $row[$field] : null;
+        }
+
+        return (array) ($row[$field] ?? []);
+    }
+
+    /**
+     * @param array $row
+     * @param string $field
+     * @param bool $nullable
+     *
+     * @return int|null
+     */
+    public static function castValueAsInt(array $row, string $field, bool $nullable)
+    {
+        if ($nullable) {
+            return isset($row[$field]) ? (int) $row[$field] : null;
+        }
+
+        return (int) ($row[$field] ?? 0);
+    }
+
+    /**
+     * @param array $row
+     * @param string $field
+     * @param bool $nullable
+     *
+     * @return bool|null
+     */
+    public static function castValueAsBool(array $row, string $field, bool $nullable)
+    {
+        if ($nullable) {
+            return isset($row[$field]) ? (bool) $row[$field] : null;
+        }
+
+        return (bool) ($row[$field] ?? false);
+    }
+
+    /**
+     * @param array $row
+     * @param string $field
+     * @param bool $nullable
+     *
+     * @return float|void
+     */
+    public static function castValueAsFloat(array $row, string $field, bool $nullable)
+    {
+        if ($nullable) {
+            return isset($row[$field]) ? (float) $row[$field] : null;
+        }
+
+        return (float) ($row[$field] ?? 0);
     }
 
     /**
@@ -461,11 +606,11 @@ class Fields
     {
         return static::make()
             ->$name($arguments[0])
-            ->format($arguments[1], (bool) ($arguments[2] ?? false));
+            ->cast($arguments[1], (bool) ($arguments[2] ?? false));
     }
 
     /**
-     * 格式化并返回一个新数组.
+     * 转换格式.
      *
      * @param array $row 单行或多行数组
      * @param bool  $addAllAllowedFields
@@ -474,12 +619,10 @@ class Fields
      */
     public static function transform(array $row, bool $addAllAllowedFields = false)
     {
-        return static::make()->format($row, $addAllAllowedFields);
+        return static::make()->cast($row, $addAllAllowedFields);
     }
 
     /**
-     * 实例化 Fields 对象
-     *
      * @param mixed ...$params
      *
      * @return static
@@ -499,6 +642,6 @@ class Fields
      */
     public static function extend(string $method, \Closure $formatter)
     {
-        static::$customFormatters[$method] = $formatter;
+        static::$customCallbacks[$method] = $formatter;
     }
 }
