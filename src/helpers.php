@@ -85,9 +85,9 @@ if (! function_exists('str_snake')) {
 
 if (! function_exists('array_is_assoc')) {
     /**
-     * Determines if an array is associative.
+     * 判断是否是关联数组.
      *
-     * An array is "associative" if it doesn't have sequential numerical keys beginning with zero.
+     * 如果数组的 key 不是以 0 开始的连续的数字，则该数组是关联数组
      *
      * @param  array  $array
      *
@@ -95,8 +95,64 @@ if (! function_exists('array_is_assoc')) {
      */
     function array_is_assoc(array $array)
     {
+        if (! $array) {
+            return false;
+        }
+
         $keys = array_keys($array);
 
         return array_keys($keys) !== $keys;
+    }
+}
+
+if (! function_exists('array_has_string_key')) {
+    /**
+     * 判断数组是否包含字符串类型的 key.
+     *
+     * @param  array  $array
+     *
+     * @return bool
+     */
+    function array_has_string_key(array $array)
+    {
+        if (! $array) {
+            return false;
+        }
+
+        foreach (array_keys($array) as &$k) {
+            if (! is_int($k)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+if (! function_exists('array_rename')) {
+    /**
+     * 数组key重命名
+     *
+     * @param array|ArrayAccess $items
+     * @param array $keys
+     *
+     * @return array|ArrayAccess
+     */
+    function array_rename($items, array $keys)
+    {
+        if (! is_array($items) && ! $items instanceof \ArrayAccess) {
+            return $items;
+        }
+
+        foreach ($items as $k => &$v) {
+            if (! isset($keys[$k])) {
+                continue;
+            }
+
+            $items[$keys[$k]] = $v;
+            unset($items[$k]);
+        }
+
+        return $items;
     }
 }

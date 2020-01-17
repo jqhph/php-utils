@@ -213,7 +213,7 @@ class Fields
      */
     public function format(array $row, bool $addAllAllowedFields = false)
     {
-        if (! array_is_assoc($row)) {
+        if (! array_has_string_key($row)) {
             $newRows = [];
             foreach ($row as &$v) {
                 if (is_array($v)) {

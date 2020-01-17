@@ -13,3 +13,25 @@ namespace Dcat\Utils\Field
     {
     }
 }
+
+namespace Illuminate\Support
+{
+    /**
+     * @method $this allDuplicates($keyOrCallback, bool $strict = false)
+     * @method $this rename(array $newKeys = null)
+     */
+    class Collection
+    {
+    }
+}
+
+
+namespace Illuminate\Database\Query
+{
+    /**
+     * @method mixed storeOrUpdate(array $values)
+     */
+    class Builder
+    {
+    }
+}
