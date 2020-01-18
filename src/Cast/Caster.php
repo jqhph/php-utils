@@ -17,10 +17,21 @@ namespace Dcat\Utils\Cast;
 class Caster
 {
     const TYPE_INT = 'integer';
+    const TYPE_INT_NULLABLE = 'integer|nullable';
+
     const TYPE_STRING = 'string';
+    const TYPE_STRING_NULLABLE = 'string|nullable';
+
     const TYPE_BOOL = 'boolean';
+    const TYPE_BOOL_NULLABLE = 'boolean|nullable';
+
     const TYPE_FLOAT = 'float';
+    const TYPE_FLOAT_NULLABLE = 'float|nullable';
+
     const TYPE_ARRAY = 'array';
+    const TYPE_ARRAY_NULLABLE = 'array|nullable';
+
+    const TYPE_NULLABLE = 'nullable';
 
     /**
      * @var array
@@ -34,20 +45,13 @@ class Caster
             'arrayFields'   => 'castValueAsArray',
         ],
         'setters' => [
-            'deny'     => 'denyFields',
-            'string'   => 'stringFields',
-            'nullable' => 'nullableFields',
-            'integer'  => 'intFields',
-            'float'    => 'floatFields',
-            'boolean'  => 'booleanFields',
-            'array'    => 'arrayFields',
-        ],
-        'types' => [
-            self::TYPE_INT,
-            self::TYPE_STRING,
-            self::TYPE_BOOL,
-            self::TYPE_FLOAT,
-            self::TYPE_ARRAY,
+            'deny'              => 'denyFields',
+            self::TYPE_STRING   => 'stringFields',
+            self::TYPE_NULLABLE => 'nullableFields',
+            self::TYPE_INT      => 'intFields',
+            self::TYPE_FLOAT    => 'floatFields',
+            self::TYPE_BOOL     => 'booleanFields',
+            self::TYPE_ARRAY    => 'arrayFields',
         ],
     ];
 
@@ -140,37 +144,7 @@ class Caster
      */
     public function fields($fields)
     {
-        $fields = (array) $fields;
-
-        if (! array_has_string_key($fields)) {
-            $this->allowedFields = $fields;
-
-            return $this;
-        }
-
-        foreach ($fields as $field => $type) {
-            if (is_int($field)) {
-                $field = $type;
-                $type = null;
-            }
-
-            $this->allowedFields[] = $field;
-
-            if (isset(static::$customCallbacks[$type])) {
-                $this->setCustomValue($type, $field);
-
-                continue;
-            }
-
-            if ($type && in_array($type, static::$definitions['types'])) {
-                $p = static::$definitions['setters'][$type];
-                if (! is_array($this->$p)) {
-                    $this->$p = [];
-                }
-
-                $this->{$p}[] = $field;
-            }
-        }
+        $this->allowedFields = array_merge($this->allowedFields, (array) $fields);
 
         return $this;
     }
@@ -272,7 +246,12 @@ class Caster
 
         $newRow = [];
 
-        foreach ($this->getAllowedFields($row) as $field) {
+        foreach ($this->getAllowedFields($row) as $field => $fieldType) {
+            if (is_int($field)) {
+                $field = $fieldType;
+                $fieldType = null;
+            }
+
             if ($this->denyFields && in_array($field, $this->denyFields)) {
                 continue;
             }
@@ -285,13 +264,19 @@ class Caster
                 continue;
             }
 
+            // 要转化的类型
+            $fieldType = $fieldType ? explode('|', $fieldType) : [];
+
+            // 判断是否允许null类型
+            $nullable = in_array(static::TYPE_NULLABLE, $fieldType)
+                ? true
+                : ($this->nullableFields === true ? true : in_array($field, $this->nullableFields));
+
             // 获取字段值，如果没有则取默认值
             $newRow[$field] = $this->getValue($row, $field);
 
-            // 判断是否允许null类型
-            $nullable = $this->nullableFields === true ? true : in_array($field, $this->nullableFields);
-
-            $value = $this->castValue($field, $newRow, $nullable, $casted);
+            // 如果定义了类型则转化
+            $value = $this->castValue($field, $fieldType, $newRow, $nullable, $casted);
             if ($casted) {
                 $newRow[$field] = $value;
                 $newRow[$field] = $this->applyFieldCallbacks($field, $newRow, $row);
@@ -299,8 +284,8 @@ class Caster
                 continue;
             }
 
+            // 默认转化为string类型，如果不是标量变量，则不做处理
             if (is_null($newRow[$field]) || is_scalar($newRow[$field])) {
-                // 默认转化为string类型，如果不是标量变量，则不做处理
                 $newRow[$field] = static::castValueAsString($newRow, $field, $nullable);
             }
 
@@ -313,26 +298,49 @@ class Caster
 
     /**
      * @param string $field
+     * @param array  $fieldType
      * @param array  $newRow
      * @param bool   $nullable
      * @param mixed  $casted
      *
      * @return mixed|void
      */
-    protected function castValue(string $field, array &$newRow, bool $nullable, &$casted)
+    protected function castValue(string $field, array $fieldType, array &$newRow, bool $nullable, &$casted)
     {
-        if ($this->customValues) {
-            foreach (static::$customCallbacks as $method => $callback) {
-                if ($this->isField($this->customValues[$method] ?? null, $field)) {
-                    $casted = true;
+        // 自定义类型优先处理
+        foreach (static::$customCallbacks as $method => $callback) {
+            if (
+                $this->isField($this->customValues[$method] ?? null, $field)
+                || in_array($method, $fieldType)
+            ) {
+                $casted = true;
 
-                    return $callback($newRow, $field, $nullable);
-                }
+                return $callback($newRow, $field, $nullable);
             }
         }
 
+        // 取出要转化的类型
+        $type = null;
+        foreach ($fieldType as $v) {
+            if ($v !== static::TYPE_NULLABLE) {
+                $type = $v;
+
+                break;
+            }
+        }
+
+        // 转化类型
+        $typeProperty = static::$definitions['setters'][$type] ?? null;
+        if (! empty(static::$definitions['casts'][$typeProperty])) {
+            $castMethod = static::$definitions['casts'][$typeProperty];
+
+            $casted = true;
+
+            return static::$castMethod($newRow, $field, $nullable);
+        }
+
+        // 转化类型
         foreach (static::$definitions['casts'] as $property => $method) {
-            // 格式化字段值
             if ($this->isField($this->$property, $field)) {
                 $casted = true;
 
