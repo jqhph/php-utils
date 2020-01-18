@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 class CollectionExtension
 {
     /**
-     * key重命名
+     * key重命名.
      */
     public static function rename()
     {
@@ -25,7 +25,7 @@ class CollectionExtension
     }
 
     /**
-     * 获取所有重复的元素
+     * 获取所有重复的元素.
      */
     public static function allDuplicates()
     {
@@ -59,7 +59,7 @@ class CollectionExtension
                 }
             }
 
-            return $this->filter(function ($v, $k) use(&$duplicates) {
+            return $this->filter(function ($v, $k) use (&$duplicates) {
                 return isset($duplicates[$k]);
             });
         });

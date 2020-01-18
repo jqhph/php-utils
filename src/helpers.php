@@ -131,7 +131,7 @@ if (! function_exists('array_has_string_key')) {
 
 if (! function_exists('array_rename')) {
     /**
-     * 数组key重命名
+     * 数组key重命名.
      *
      * @param array|ArrayAccess $items
      * @param array $keys
