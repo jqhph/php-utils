@@ -2,15 +2,15 @@
 
 namespace Dcat\Utils\Eloquent;
 
-use Illuminate\Support\Arr;
-use Illuminate\Database\Query;
 use Illuminate\Database\Eloquent;
+use Illuminate\Database\Query;
 use Illuminate\Database\Query\Grammars\Grammar;
+use Illuminate\Support\Arr;
 
 class QueryExtension
 {
     /**
-     * Mysql 保存或新增功能
+     * Mysql 保存或新增功能.
      */
     public static function insertOrReplace()
     {
@@ -26,7 +26,7 @@ class QueryExtension
                 $suffix[] = "{$column} = values({$column})";
             }
 
-            return $sql.join(', ', $suffix);
+            return $sql.implode(', ', $suffix);
         };
 
         Eloquent\Builder::macro('insertOrReplace', function ($values) {

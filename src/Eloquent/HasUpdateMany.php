@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 trait HasUpdateMany
 {
     /**
-     * 批量更新操作
+     * 批量更新操作.
      *
      * UPDATE table SET
      *     columns1 = CASE id
@@ -81,7 +81,7 @@ trait HasUpdateMany
         $firstRow = current($rows);
 
         // 更新条件字段数组
-        list($conditionColumns, $conditionWhereTemplate) = $this->prepareConditionColumns($firstRow, $condition);
+        [$conditionColumns, $conditionWhereTemplate] = $this->prepareConditionColumns($firstRow, $condition);
 
         // 需要更新的字段
         $updateColumns = array_filter(array_keys($firstRow), function ($column) use ($conditionColumns) {
@@ -99,7 +99,6 @@ trait HasUpdateMany
             $setSql = "`{$column}` = CASE ";
 
             foreach ($rows as $data) {
-
                 $andConditions = [];
                 foreach ($conditionColumns as $conditionColumn) {
                     $andConditions[] = "`{$conditionColumn}` = ?";
@@ -116,7 +115,7 @@ trait HasUpdateMany
         }
 
         // 构建whereIn条件值数组
-        list($whereBindings, $whereSql) = $this->buildUpdateWhereSql($rows, $conditionColumns, $conditionWhereTemplate);
+        [$whereBindings, $whereSql] = $this->buildUpdateWhereSql($rows, $conditionColumns, $conditionWhereTemplate);
 
         $bindings = array_merge($bindings, $whereBindings, $conditionBindings);
 
@@ -127,7 +126,7 @@ trait HasUpdateMany
     }
 
     /**
-     * 构建where sql语句
+     * 构建where sql语句.
      *
      * @param array       $rows
      * @param array       $conditionColumns

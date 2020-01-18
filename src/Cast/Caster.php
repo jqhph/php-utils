@@ -136,7 +136,7 @@ class Caster
     protected $customValues = [];
 
     /**
-     * 设置允许的字段
+     * 设置允许的字段.
      *
      * @param string|array $fields
      *
@@ -459,6 +459,7 @@ class Caster
     {
         return $this->allowedFields ?: array_keys($row);
     }
+
     /**
      * @param string       $type
      * @param string|array $field
@@ -471,8 +472,6 @@ class Caster
 
         $this->customValues[$type] = array_merge($this->customValues[$type], (array) $field);
     }
-
-
 
     /**
      * @param string $name
@@ -641,7 +640,7 @@ class Caster
     }
 
     /**
-     * 注册自定义字段格式化工具
+     * 注册自定义字段格式化工具.
      *
      * @param string $method
      * @param \Closure $formatter
