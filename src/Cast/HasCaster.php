@@ -75,14 +75,14 @@ trait HasCaster
     }
 
     /**
-     * 转化数组每个元素的数据类型.
+     * 转化类型.
      *
      * @param array $values
      * @param bool  $addAllAllowedFields
      *
      * @return array
      */
-    public function castAttributes(array $values, bool $addAllAllowedFields = false)
+    public function cast(array $values, bool $addAllAllowedFields = false)
     {
         return $this->caster()->cast($values, $addAllAllowedFields);
     }
