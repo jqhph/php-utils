@@ -29,6 +29,42 @@ if (! function_exists('array_chunk_each')) {
     }
 }
 
+
+if (! function_exists('iterator_chunk_each')) {
+    /**
+     * 分块处理.
+     *
+     * @param array    $items
+     * @param int      $len
+     * @param callable $callback
+     */
+    function iterator_chunk_each($iterator, int $len, callable $callback)
+    {
+        if (! $iterator) {
+            return;
+        }
+
+        $i = 0;
+
+        $chunk = [];
+        foreach ($iterator as $item) {
+            $chunk[] = $item;
+
+            if (count($chunk) >= $len) {
+                call_user_func($callback, $chunk, $i);
+
+                $chunk = [];
+            }
+
+            $i++;
+        }
+
+        if ($chunk) {
+            call_user_func($callback, $chunk, $i);
+        }
+    }
+}
+
 if (! function_exists('paginate_array')) {
     /**
      * 获取分页数组.
