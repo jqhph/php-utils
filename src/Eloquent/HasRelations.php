@@ -126,6 +126,7 @@ trait HasRelations
                     $related->save();
                     break;
                 case $relation instanceof Relations\BelongsTo:
+                case $relation instanceof Relations\MorphTo:
 
                     $parent = $this->$name;
 
@@ -141,8 +142,9 @@ trait HasRelations
                     $parent->save();
 
                     // When in creating, associate two models
-                    if (! $this->{$relation->getForeignKey()}) {
-                        $this->{$relation->getForeignKey()} = $parent->getKey();
+                    $foreignKeyMethod = version_compare(app()->version(), '5.8.0', '<') ? 'getForeignKey' : 'getForeignKeyName';
+                    if (! $this->{$relation->{$foreignKeyMethod}()}) {
+                        $this->{$relation->{$foreignKeyMethod}()} = $parent->getKey();
 
                         $this->save();
                     }
