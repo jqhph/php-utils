@@ -29,7 +29,6 @@ if (! function_exists('array_chunk_each')) {
     }
 }
 
-
 if (! function_exists('iterator_chunk_each')) {
     /**
      * 分块处理.

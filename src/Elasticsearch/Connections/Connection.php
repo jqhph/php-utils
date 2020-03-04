@@ -453,11 +453,10 @@ class Connection implements ConnectionInterface
             $this->markAlive();
 
             return true;
-        } else {
-            $this->markDead();
-
-            return false;
         }
+        $this->markDead();
+
+        return false;
     }
 
     /**

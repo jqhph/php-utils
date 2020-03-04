@@ -2,7 +2,7 @@
 
 namespace Dcat\Utils\Captcha;
 
-/**
+/*
  * Laravel 5 & 6 Captcha package.
  *
  * @copyright Copyright (c) 2015 MeWebStudio

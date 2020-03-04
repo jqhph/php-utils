@@ -75,7 +75,6 @@ trait HasRelations
         return $this->__relations = [&$relations, $map];
     }
 
-
     /**
      * Update relation data.
      *

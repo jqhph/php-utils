@@ -71,8 +71,8 @@ class StaticNoPingConnectionPool extends AbstractConnectionPool implements Conne
 
         if ($connection->getLastPing() + $timeout < time()) {
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }
