@@ -1,46 +1,60 @@
 <?php
 
-if (! function_exists('array_chunk_each')) {
+if (! function_exists('array_chunk_map')) {
     /**
      * 数组分块处理.
      *
-     * @param array    $items
-     * @param int      $len
+     * @param array $items
+     * @param int $len
      * @param callable $callback
+     *
+     * @return array
      */
-    function array_chunk_each(array $items, int $len, callable $callback)
+    function array_chunk_map(array $items, int $len, callable $callback)
     {
+        $results = [];
+
         if (! $items) {
-            return;
+            return $results;
         }
 
         if (count($items) <= $len) {
-            call_user_func($callback, $items, 1);
+            $results[] = call_user_func($callback, $items, 1);
 
-            return;
+            return $results;
         }
 
         $i = 0;
         while ($new = array_slice($items, $i * $len, $len)) {
             $i++;
 
-            call_user_func($callback, $new, $i);
+            $results[] = $data = call_user_func($callback, $new, $i);
+
+            if ($data === false) {
+                break;
+            }
         }
+
+        return array_filter($results);
     }
 }
 
-if (! function_exists('iterator_chunk_each')) {
+if (! function_exists('iterator_chunk_map')) {
     /**
      * 分块处理.
      *
      * @param array    $items
      * @param int      $len
      * @param callable $callback
+     *
+     * @return array
      */
-    function iterator_chunk_each($iterator, int $len, callable $callback)
+    function iterator_chunk_map($iterator, int $len, callable $callback)
     {
+        $results = [];
+
         if (! $iterator) {
-            return;
+            return $results;
         }
 
         $i = 0;
@@ -50,17 +64,23 @@ if (! function_exists('iterator_chunk_each')) {
             $chunk[] = $item;
 
             if (count($chunk) >= $len) {
-                call_user_func($callback, $chunk, $i);
+                $results[] = $data = call_user_func($callback, $chunk, $i);
 
                 $chunk = [];
+
+                if ($data === false) {
+                    break;
+                }
             }
 
             $i++;
         }
 
         if ($chunk) {
-            call_user_func($callback, $chunk, $i);
+            $results[] = call_user_func($callback, $chunk, $i);
         }
+
+        return array_filter($results);
     }
 }
 
