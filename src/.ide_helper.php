@@ -18,13 +18,17 @@ namespace Illuminate\Support
 {
     /**
      * @method $this allDuplicates($keyOrCallback, bool $strict = false)
+     * @method $this rejectAllDuplicates($keyOrCallback, bool $strict = false)
+     * @method $this rejectDuplicates($keyOrCallback, bool $strict = false)
      * @method $this rename(array $newKeys = null)
+     * @method $this rejectFirst()
+     * @method $this rejectLast()
+     * @method array splitBy($keyOrCallback)
      */
     class Collection
     {
     }
 }
-
 
 namespace Illuminate\Database\Query
 {

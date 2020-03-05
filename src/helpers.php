@@ -21,7 +21,7 @@ if (! function_exists('array_chunk_map')) {
         if (count($items) <= $len) {
             $results[] = call_user_func($callback, $items, 1);
 
-            return $results;
+            return array_filter($results);
         }
 
         $i = 0;
